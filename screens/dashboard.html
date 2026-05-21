@@ -1,0 +1,103 @@
+<div class="screen-inner active" id="screen-dashboard">
+    <div class="balance-hero">
+        <div>
+            <div class="balance-label">Total Balance</div>
+            <div class="balance-amount" id="dashboard-total-balance">UGX 4,820,500</div>
+            <div class="balance-change" id="dashboard-change-text"><i class="ti ti-trending-up" style="font-size:12px"
+                    aria-hidden="true"></i> +UGX 320,000 this month</div>
+        </div>
+        <div class="balance-actions">
+            <button class="bal-btn" data-action="deposit"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i>
+                Deposit</button>
+            <button class="bal-btn" data-action="withdraw"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
+                Withdraw</button>
+        </div>
+    </div>
+    <div class="quick-actions">
+        <div class="qa-btn" data-action="transfer"><i class="ti ti-send" aria-hidden="true"></i><span>Transfer</span>
+        </div>
+        <div class="qa-btn" data-action="apply-loan"><i class="ti ti-file-invoice" aria-hidden="true"></i><span>Apply
+                Loan</span></div>
+        <div class="qa-btn" data-action="pay-bill"><i class="ti ti-qrcode" aria-hidden="true"></i><span>Pay Bill</span>
+        </div>
+        <div class="qa-btn" data-action="statement"><i class="ti ti-chart-line"
+                aria-hidden="true"></i><span>Statement</span></div>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Shares Value</div>
+            <div class="stat-value" id="dashboard-shares-value">UGX 1.2M</div>
+            <div class="stat-pill pill-green"><i class="ti ti-arrow-up-right" style="font-size:10px"
+                    aria-hidden="true"></i> 8.2%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Loan</div>
+            <div class="stat-value" id="dashboard-active-loan">UGX 2.5M</div>
+            <div class="stat-pill pill-amber"><i class="ti ti-clock" style="font-size:10px" aria-hidden="true"></i> 14
+                months left</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Dividend (2024)</div>
+            <div class="stat-value" id="dashboard-dividend">UGX 84,000</div>
+            <div class="stat-pill pill-green"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i>
+                Credited</div>
+        </div>
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-hdr">
+                <div class="panel-title">Recent transactions</div>
+                <div class="panel-link" data-screen="transactions">View all</div>
+            </div>
+            <div id="recent-transactions">
+                <div class="tx-row">
+                    <div class="tx-icon dep"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i></div>
+                    <div class="tx-desc">
+                        <div class="tx-name">Monthly savings</div>
+                        <div class="tx-date">May 15, 2026</div>
+                    </div>
+                    <div class="tx-amt pos">+320,000</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-hdr">
+                <div class="panel-title">Savings goal</div>
+                <div class="panel-link">Edit</div>
+            </div>
+            <div class="goal-bar-wrap">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span
+                        style="font-size:13px;color:var(--color-text-secondary)">Emergency fund</span><span
+                        style="font-size:13px;font-weight:500;">62%</span></div>
+                <div class="goal-bar-bg">
+                    <div class="goal-bar-fill" style="width:62%;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span
+                        style="font-size:11px;color:var(--color-text-tertiary)">UGX 1.86M</span><span
+                        style="font-size:11px;color:var(--color-text-tertiary)">Goal: 3M</span></div>
+            </div>
+            <div class="goal-bar-wrap">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span
+                        style="font-size:13px;color:var(--color-text-secondary)">School fees</span><span
+                        style="font-size:13px;font-weight:500;">88%</span></div>
+                <div class="goal-bar-bg">
+                    <div class="goal-bar-fill" style="width:88%;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span
+                        style="font-size:11px;color:var(--color-text-tertiary)">UGX 1.76M</span><span
+                        style="font-size:11px;color:var(--color-text-tertiary)">Goal: 2M</span></div>
+            </div>
+            <div class="goal-bar-wrap">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span
+                        style="font-size:13px;color:var(--color-text-secondary)">Land purchase</span><span
+                        style="font-size:13px;font-weight:500;">24%</span></div>
+                <div class="goal-bar-bg">
+                    <div class="goal-bar-fill" style="width:24%;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span
+                        style="font-size:11px;color:var(--color-text-tertiary)">UGX 2.4M</span><span
+                        style="font-size:11px;color:var(--color-text-tertiary)">Goal: 10M</span></div>
+            </div>
+        </div>
+    </div>
+</div>
