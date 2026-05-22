@@ -1,0 +1,325 @@
+<div class="screen-inner" id="screen-welcome">
+    <div class="welcome-hero">
+        <div class="hero-content">
+            <h1>Welcome to MazaoSACCO</h1>
+            <p>Your trusted partner for savings and credit solutions</p>
+        </div>
+        <div class="hero-image">
+            <svg width="300" height="200" viewBox="0 0 300 200" fill="none">
+                <rect width="300" height="200" fill="#eaf3de" />
+                <circle cx="150" cy="100" r="60" fill="#3b6d11" opacity="0.1" />
+                <path d="M150 60L180 100L160 120L150 110L140 120L120 100Z" fill="#3b6d11" opacity="0.6" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="welcome-section">
+        <div class="section-header">
+            <h2>Our Savings Products</h2>
+            <p>Choose the right savings plan for your future</p>
+        </div>
+        <div class="products-grid" id="savings-products">
+            <!-- Will be populated by JS -->
+        </div>
+    </div>
+
+    <div class="welcome-section">
+        <div class="section-header">
+            <h2>Our Loan Products</h2>
+            <p>Flexible loan options for your needs</p>
+        </div>
+        <div class="products-grid" id="loan-products">
+            <!-- Will be populated by JS -->
+        </div>
+    </div>
+
+    <div class="welcome-cta">
+        <div class="cta-content">
+            <h3>Ready to join MazaoSACCO?</h3>
+            <p>Take control of your financial future today. Become a member and access all our services.</p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                <button class="cta-button" id="register-btn">
+                    <i class="ti ti-user-plus" aria-hidden="true"></i>
+                    Register Now
+                </button>
+                <button class="cta-button" id="login-btn" style="background-color: #555;">
+                    <i class="ti ti-login" aria-hidden="true"></i>
+                    Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="welcome-features">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="ti ti-shield-check" aria-hidden="true"></i>
+            </div>
+            <h4>Secure & Safe</h4>
+            <p>Your funds are protected by our organization</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="ti ti-trending-up" aria-hidden="true"></i>
+            </div>
+            <h4>Great Returns</h4>
+            <p>Competitive interest rates on savings and investments</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="ti ti-headset" aria-hidden="true"></i>
+            </div>
+            <h4>24/7 Support</h4>
+            <p>Our team is always ready to help</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="ti ti-zap" aria-hidden="true"></i>
+            </div>
+            <h4>Fast & Easy</h4>
+            <p>Quick application process, instant approvals</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .welcome-hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+        padding: 60px 40px;
+        background: linear-gradient(135deg, #3b6d11 0%, #4caf6e 100%);
+        border-radius: 12px;
+        margin-bottom: 40px;
+        color: white;
+    }
+
+    .hero-content h1 {
+        margin: 0 0 12px 0;
+        font-size: 36px;
+        font-weight: 700;
+    }
+
+    .hero-content p {
+        margin: 0;
+        font-size: 16px;
+        opacity: 0.95;
+    }
+
+    .hero-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .welcome-section {
+        margin-bottom: 50px;
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+    }
+
+    .section-header h2 {
+        margin: 0 0 8px 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1a2e1a;
+    }
+
+    .section-header p {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .product-card {
+        background: white;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .product-card:hover {
+        border-color: #3b6d11;
+        box-shadow: 0 8px 20px rgba(59, 109, 17, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .product-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .product-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a2e1a;
+        margin: 0;
+        flex: 1;
+    }
+
+    .product-code {
+        background: #3b6d11;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+        text-transform: uppercase;
+    }
+
+    .product-description {
+        font-size: 13px;
+        color: #666;
+        margin: 0 0 16px 0;
+        line-height: 1.5;
+    }
+
+    .product-details {
+        background: #f9f9f9;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 0;
+        flex: 1;
+        overflow-y: auto;
+        max-height: 300px;
+    }
+
+    .product-detail-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+
+    .product-detail-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .product-detail-label {
+        color: #666;
+        font-weight: 500;
+        flex-shrink: 0;
+    }
+
+    .product-detail-value {
+        color: #3b6d11;
+        font-weight: 600;
+        text-align: right;
+        flex: 1;
+    }
+
+    .welcome-cta {
+        background: linear-gradient(135deg, #f0f8ed 0%, #e8f5e0 100%);
+        border: 2px solid #3b6d11;
+        border-radius: 12px;
+        padding: 50px 40px;
+        text-align: center;
+        margin: 50px 0;
+    }
+
+    .cta-content h3 {
+        margin: 0 0 12px 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a2e1a;
+    }
+
+    .cta-content p {
+        margin: 0 0 24px 0;
+        font-size: 16px;
+        color: #666;
+    }
+
+    .cta-button {
+        background: #3b6d11;
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .cta-button:hover {
+        background: #2d5209;
+    }
+
+    .welcome-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin-top: 40px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid #eee;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-icon {
+        font-size: 40px;
+        color: #3b6d11;
+        margin-bottom: 12px;
+    }
+
+    .feature-card h4 {
+        margin: 0 0 8px 0;
+        color: #1a2e1a;
+        font-size: 16px;
+    }
+
+    .feature-card p {
+        margin: 0;
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .welcome-hero {
+            flex-direction: column;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 28px;
+        }
+
+        .welcome-cta {
+            padding: 30px 24px;
+        }
+    }
+</style>
