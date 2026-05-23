@@ -1,35 +1,62 @@
 // Backend API configuration
-const API_BASE_URL = localStorage.getItem('api_base_url') || 'http://localhost:8080/api/v1';
+const API_BASE_URL = 'http://localhost:8080/api/v1';
+
+export function setAuthToken(auth_token) {
+    localStorage.setItem('auth_token', auth_token);
+}
+
+export function getAuthToken() {
+    return localStorage.getItem('auth_token');
+}
+
+export function isUserLoggedIn() {
+    return localStorage.getItem('auth_token') !== null;
+}
+
+export function logout() {
+    localStorage.removeItem('auth_token');
+}
+
+// Global member data cache
+let cachedMemberData = null;
+
+export function setCachedMemberData(memberData) {
+    cachedMemberData = memberData;
+    // Also store member_id for API calls that need it
+    if (memberData?.id || memberData?.member_id) {
+        localStorage.setItem('current_member_id', memberData.id || memberData.member_id);
+    }
+}
+
+export function getCachedMemberData() {
+    return cachedMemberData;
+}
+
+export function getCurrentMemberId() {
+    return cachedMemberData?.id || cachedMemberData?.member_id || localStorage.getItem('current_member_id');
+}
 
 export function setCurrentMemberId(memberId) {
     localStorage.setItem('current_member_id', memberId);
 }
 
-export function getCurrentMemberId() {
-    return localStorage.getItem('current_member_id');
+export function getMemberField(fieldName) {
+    return cachedMemberData?.[fieldName];
 }
 
-export function isUserLoggedIn() {
-    return localStorage.getItem('current_member_id') !== null;
-}
-
-export function logout() {
+export function clearMemberId() {
+    cachedMemberData = null;
     localStorage.removeItem('current_member_id');
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('member_data');
 }
 
-export function setApiBaseUrl(baseUrl) {
-    localStorage.setItem('api_base_url', baseUrl);
-}
 
 // API endpoints - mapped to real backend
 export const endpoints = {
-    // Primary endpoint - returns member with all nested data
-    member: (id) => `${API_BASE_URL}/members/member/${id}`,
+    // Member endpoint - token is sent in Authorization header, member_id extracted by backend
+    member: () => `${API_BASE_URL}/members/member/`,
     // Transactions endpoints for detailed transaction history
-    savingsTransactions: (id) => `${API_BASE_URL}/savings/transactions?member_id=${id}`,
-    loansTransactions: (id) => `${API_BASE_URL}/loans/repayments?member_id=${id}`,
+    savingsTransactions: () => `${API_BASE_URL}/savings/transactions`,
+    loansTransactions: () => `${API_BASE_URL}/loans/repayments`,
 };
 
 // Shared Fetch Engine
@@ -38,6 +65,12 @@ export async function apiFetch(url, options = {}) {
         headers: { 'Content-Type': 'application/json' },
         ...options,
     };
+
+    // Add Authorization header with Bearer token if available
+    const token = getAuthToken();
+    if (token) {
+        defaultOptions.headers.Authorization = `Bearer ${token}`;
+    }
 
     try {
         const response = await fetch(url, defaultOptions);
@@ -56,24 +89,25 @@ export async function apiFetch(url, options = {}) {
 
 
 // Data Transformation Functions
-
 export function transformMemberToDashboard(memberData) {
     if (!memberData) return {};
 
-    // Safely aggregate data fields out of nested backend collections
-    const totalSavings = Array.isArray(memberData.savings_accounts)
+    // 1. Safely aggregate savings balance out of the savings_accounts array
+    const totalSavings = Array.isArray(memberData.savings_accounts) && memberData.savings_accounts.length > 0
         ? memberData.savings_accounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0)
-        : (memberData.total_savings || 0);
+        : parseFloat(memberData.total_savings || 0);
 
-    const totalShares = Array.isArray(memberData.share_accounts)
+    // 2. Safely aggregate shares balance 
+    const totalShares = Array.isArray(memberData.share_accounts) && memberData.share_accounts.length > 0
         ? memberData.share_accounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0)
-        : (memberData.shares_balance || 0);
+        : parseFloat(memberData.shares_balance || 0);
 
-    const activeLoans = Array.isArray(memberData.loans)
+    // 3. Safely aggregate outstanding loan balance
+    const activeLoans = Array.isArray(memberData.loans) && memberData.loans.length > 0
         ? memberData.loans.reduce((sum, ln) => sum + parseFloat(ln.outstanding_balance || 0), 0)
-        : (memberData.active_loan_balance || 0);
+        : parseFloat(memberData.active_loan_balance || 0);
 
-    // Extract recent transactions from savings accounts
+    // 4. Flatten and extract recent transactions safely
     const recentTransactions = Array.isArray(memberData.savings_accounts)
         ? memberData.savings_accounts
             .flatMap(acc => acc.transactions || [])
@@ -82,7 +116,7 @@ export function transformMemberToDashboard(memberData) {
             .map(tx => ({
                 ...tx,
                 type: tx.transaction_type || 'deposit',
-                amount: tx.amount,
+                amount: parseFloat(tx.amount || 0),
                 date: tx.created_at || tx.date,
                 description: `${tx.transaction_type || 'Deposit'} - ${tx.reference || 'N/A'}`
             }))
@@ -93,11 +127,10 @@ export function transformMemberToDashboard(memberData) {
         changeText: '+UGX 0 this month',
         sharesValue: totalShares,
         activeLoan: activeLoans,
-        dividend: memberData.last_dividend || 0,
+        dividend: parseFloat(memberData.last_dividend || 0),
         recentTransactions: recentTransactions
     };
 }
-
 export function transformMemberToProfile(memberData) {
     if (!memberData) return {};
 
@@ -129,10 +162,11 @@ export function transformMemberToProfile(memberData) {
         gender: (memberData.gender && memberData.gender.gender) || 'N/A',
         sharesValue: calculatedShares,
         totalSavings: calculatedSavings,
-        guarantors: '0 active'
+        guarantors: '0 active',
+
+        branch_id: memberData.branch_id || memberData.branch?.id || null
     };
 }
-
 export function transformMemberToSavings(memberData) {
     if (!memberData) return {};
 
@@ -244,12 +278,15 @@ export function transformMemberToTransactions(memberData) {
 // Screen-Specific Fetch Functions
 
 export async function fetchMemberData() {
-    const memberId = getCurrentMemberId();
-    if (!memberId) {
+    const token = getAuthToken();
+    if (!token) {
         throw new Error('User not logged in');
     }
-    const url = endpoints.member(memberId);
-    return await apiFetch(url);
+    const url = endpoints.member();
+    const memberData = await apiFetch(url);
+    // Cache the member data globally for access in other parts of the app
+    setCachedMemberData(memberData);
+    return memberData;
 }
 
 export async function fetchDashboardSummary() {
@@ -280,6 +317,9 @@ export async function fetchProfile() {
 // Form Submission Functions
 
 export async function submitDeposit(amount, accountId, description = '') {
+    if (!accountId) throw new Error('Account ID is required');
+    if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
+
     const url = `${API_BASE_URL}/savings/transactions`;
     return await apiFetch(url, {
         method: 'POST',
@@ -294,6 +334,9 @@ export async function submitDeposit(amount, accountId, description = '') {
 }
 
 export async function submitWithdraw(amount, accountId, description = '') {
+    if (!accountId) throw new Error('Account ID is required');
+    if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
+
     const url = `${API_BASE_URL}/savings/transactions`;
     return await apiFetch(url, {
         method: 'POST',
@@ -308,6 +351,10 @@ export async function submitWithdraw(amount, accountId, description = '') {
 }
 
 export async function submitTransfer(fromAccountId, toMemberId, amount, description = '') {
+    if (!fromAccountId) throw new Error('From Account ID is required');
+    if (!toMemberId) throw new Error('To Member ID is required');
+    if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
+
     const url = `${API_BASE_URL}/savings/transactions`;
     return await apiFetch(url, {
         method: 'POST',
@@ -322,21 +369,35 @@ export async function submitTransfer(fromAccountId, toMemberId, amount, descript
     });
 }
 
-export async function submitLoanApplication(productId, amount, guarantors = []) {
+export async function submitLoanApplication(formData) {
     const url = `${API_BASE_URL}/loans/applications`;
+
     return await apiFetch(url, {
         method: 'POST',
         body: JSON.stringify({
+            // 1. Core structural foreign keys
             member_id: getCurrentMemberId(),
-            loan_product_id: productId,
-            amount_requested: parseFloat(amount),
-            guarantors: guarantors,
-            created_at: new Date().toISOString()
+            branch_id: formData.branch_id,
+            product_id: formData.productId,
+
+            // 2. Map financial metrics to match backend schema names exactly
+            applied_amount: parseFloat(formData.amount || 0),
+            purpose: formData.purpose || 'Business development',
+            term_months: formData.termMonths,
+            status: 'DRAFT', // Matches your default backend enum value
+
+            // 3. Match backend naming convention for date logging
+            applied_date: new Date().toISOString().split('T')[0], // Outputs format: YYYY-MM-DD
+
+            // 4. Preserve guarantor collection array structures
+            guarantors: formData.guarantors || []
         })
     });
 }
-
 export async function submitLoanPayment(loanId, amount, paymentMethod = 'cash') {
+    if (!loanId) throw new Error('Loan ID is required');
+    if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
+
     const url = `${API_BASE_URL}/loans/repayments`;
     return await apiFetch(url, {
         method: 'POST',
@@ -370,7 +431,7 @@ export async function fetchSavingsProducts() {
 // Authentication Functions
 
 export async function loginUser(email, password) {
-    const url = `${API_BASE_URL}/auth/login`;
+    const url = `${API_BASE_URL}/auth/signin`;
     const response = await apiFetch(url, {
         method: 'POST',
         body: JSON.stringify({
@@ -379,12 +440,9 @@ export async function loginUser(email, password) {
         })
     });
 
-    // Store user ID and auth token
-    if (response.user_id || response.id) {
-        setCurrentMemberId(response.user_id || response.id);
-        if (response.auth_token) {
-            localStorage.setItem('auth_token', response.auth_token);
-        }
+    // Extract the access token directly from the root response
+    if (response?.access_token) {
+        localStorage.setItem('auth_token', response.access_token);
     }
 
     return response;
@@ -426,4 +484,10 @@ export function getTempMemberData() {
 
 export function clearTempMemberData() {
     localStorage.removeItem('temp_member_data');
+}
+
+export function clearAllMemberData() {
+    localStorage.removeItem('temp_member_data');
+    localStorage.removeItem('current_member_id');
+    clearMemberId();
 }

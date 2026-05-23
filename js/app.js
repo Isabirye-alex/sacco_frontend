@@ -8,7 +8,8 @@ import {
     submitDeposit, submitWithdraw, submitTransfer,
     submitLoanApplication, submitLoanPayment, submitProfileUpdate,
     fetchMemberData, isUserLoggedIn, loginUser, registerMember, setMemberPassword,
-    getTempMemberData, clearTempMemberData, setCurrentMemberId, fetchLoanProducts
+    getTempMemberData, clearTempMemberData, setCurrentMemberId, fetchLoanProducts,
+    fetchProfile
 } from './api.js';
 import { showModal, showSuccessMessage, showErrorMessage } from './modals.js';
 import {
@@ -320,8 +321,10 @@ function showTransferForm(accounts) {
 async function showLoanApplicationForm() {
     try {
         const products = await fetchLoanProducts();
+        const user = await fetchProfile();
+        console.log("Fetched User Profile Data:", user);
 
-        const { element, getFormData } = createLoanApplicationForm(products);
+        const { element, getFormData } = createLoanApplicationForm(products, user);
 
         showModal('Apply for a Loan', element, [
             {
@@ -333,16 +336,20 @@ async function showLoanApplicationForm() {
                 primary: true,
                 onClick: async () => {
                     const data = getFormData();
+
+                    // Simple validation check before shipping payload to the api
                     if (!data.productId || !data.amount || parseFloat(data.amount) <= 0) {
                         showErrorMessage('Please fill in all required fields');
                         return;
                     }
 
                     try {
-                        await submitLoanApplication(data.productId, data.amount, []);
+                        // Pass the unified 'data' object matching the new API function layout
+                        await submitLoanApplication(data);
+
                         document.querySelector('.modal-overlay')?.remove();
                         showSuccessMessage('Loan application submitted! We will review and contact you soon.');
-                        memberData = null; // Refresh data
+                        memberData = null; // Flush data cache to sync new values
                         loadScreenData(currentScreen);
                     } catch (error) {
                         showErrorMessage(`Application failed: ${error.message}`);
@@ -354,7 +361,6 @@ async function showLoanApplicationForm() {
         showErrorMessage(`Error loading loan products: ${error.message}`);
     }
 }
-
 function showPayBillForm(loans) {
     if (loans.length === 0) {
         showErrorMessage('No active loans found');
@@ -538,11 +544,36 @@ async function showRegisterForm() {
 
     try {
         // 2. Fetch all dynamic lookup data concurrently from your endpoints
-        const [branches, genders, maritalStatuses] = await Promise.all([
-            fetch('http://localhost:8080/api/v1/organisation/branches').then(res => res.json()),
-            fetch('http://localhost:8080/api/v1/members/genders').then(res => res.json()),
-            fetch('http://localhost:8080/api/v1/members/marital-statuses').then(res => res.json())
+        const [branchesRes, gendersRes, maritalStatusesRes] = await Promise.all([
+            fetch('http://localhost:8080/api/v1/organisation/branches'),
+            fetch('http://localhost:8080/api/v1/members/genders'),
+            fetch('http://localhost:8080/api/v1/members/marital-statuses')
         ]);
+
+        // Check if responses are OK
+        if (!branchesRes.ok) throw new Error(`Failed to load branches: ${branchesRes.statusText}`);
+        if (!gendersRes.ok) throw new Error(`Failed to load genders: ${gendersRes.statusText}`);
+        if (!maritalStatusesRes.ok) throw new Error(`Failed to load marital statuses: ${maritalStatusesRes.statusText}`);
+
+        // Parse JSON
+        const branchesData = await branchesRes.json();
+        const gendersData = await gendersRes.json();
+        const maritalStatusesData = await maritalStatusesRes.json();
+
+        // Extract the array from the response (handle different response structures)
+        const branches = Array.isArray(branchesData) ? branchesData : branchesData.data || [];
+        const genders = Array.isArray(gendersData) ? gendersData : gendersData.data || [];
+        const maritalStatuses = Array.isArray(maritalStatusesData) ? maritalStatusesData : maritalStatusesData.data || [];
+
+        // Validate that required data is available
+        if (!branches || branches.length === 0) {
+            showErrorMessage('Error: No branches available. Please contact system administrator.');
+            return;
+        }
+        if (!genders || genders.length === 0) {
+            showErrorMessage('Error: No genders available. Please contact system administrator.');
+            return;
+        }
 
         // 3. Initialize your form component injecting the fetched data records
         const { element, getFormData } = createRegisterForm({
@@ -565,30 +596,34 @@ async function showRegisterForm() {
                     label: 'Register',
                     primary: true,
                     onClick: async () => {
-                        const data = getFormData();
-
-                        // 5. Updated validation checks matching your required API fields
-                        if (
-                            !data.first_name ||
-                            !data.last_name ||
-                            !data.branch_id ||
-                            !data.gender_id
-                        ) {
-                            showErrorMessage('Please fill in all mandatory system sections.');
-                            return;
-                        }
-
                         try {
-                            const response = await registerMember(data);
-                            registrationModal.close();
-                            showSuccessMessage('Member registration successful! Please set your password.');
+                            const data = getFormData();
 
-                            // Show password setup form frame
-                            setTimeout(() => {
-                                showPasswordSetupForm(response);
-                            }, 500);
-                        } catch (error) {
-                            showErrorMessage(`Registration failed: ${error.message}`);
+                            // 5. Updated validation checks matching your required API fields
+                            if (
+                                !data.member.first_name ||
+                                !data.member.last_name
+
+                            ) {
+                                showErrorMessage('Please fill in all mandatory system sections.');
+                                return;
+                            }
+
+                            try {
+                                const response = await registerMember(data);
+                                registrationModal.close();
+                                showSuccessMessage('Member registration successful! Please set your password.');
+
+                                // Show password setup form frame
+                                setTimeout(() => {
+                                    showPasswordSetupForm(response);
+                                }, 500);
+                            } catch (error) {
+                                showErrorMessage(`Registration failed: ${error.message}`);
+                            }
+                        } catch (validationError) {
+                            // Catch validation errors from getFormData()
+                            showErrorMessage(validationError.message);
                         }
                     }
                 }
@@ -614,42 +649,47 @@ function showPasswordSetupForm(memberData) {
             label: 'Set Password',
             primary: true,
             onClick: async () => {
-                const data = getFormData();
-                if (!data.password || !data.confirmPassword) {
-                    showErrorMessage('Please fill in all required fields');
-                    return;
-                }
-
-                if (data.password !== data.confirmPassword) {
-                    showErrorMessage('Passwords do not match');
-                    return;
-                }
-
-                if (data.password.length < 8) {
-                    showErrorMessage('Password must be at least 8 characters long');
-                    return;
-                }
-
                 try {
-                    const passwordData = {
-                        organisation_id: memberData.organisation_id,
-                        role_id: memberData.branch_id, // Using branch_id as role_id if not provided
-                        email: memberData.email,
-                        first_name: memberData.first_name,
-                        last_name: memberData.last_name,
-                        user_type: memberData.user_type || 'MEMBER',
-                        password: data.password,
-                        phone: memberData.phone_primary,
-                        member_id: memberData.id
-                    };
+                    const data = getFormData();
+                    if (!data.password || !data.confirmPassword) {
+                        showErrorMessage('Please fill in all required fields');
+                        return;
+                    }
 
-                    const response = await setMemberPassword(passwordData);
-                    document.querySelector('.modal-overlay')?.remove();
-                    showSuccessMessage('Password set successfully! You can now login.');
-                    clearTempMemberData();
-                    setActiveScreen('welcome');
-                } catch (error) {
-                    showErrorMessage(`Password setup failed: ${error.message}`);
+                    if (data.password !== data.confirmPassword) {
+                        showErrorMessage('Passwords do not match');
+                        return;
+                    }
+
+                    if (data.password.length < 8) {
+                        showErrorMessage('Password must be at least 8 characters long');
+                        return;
+                    }
+
+                    try {
+                        const passwordData = {
+                            organisation_id: memberData.organisation_id,
+                            role_id: memberData.branch_id, // Using branch_id as role_id if not provided
+                            email: memberData.email,
+                            first_name: memberData.first_name,
+                            last_name: memberData.last_name,
+                            user_type: memberData.user_type || 'MEMBER',
+                            password: data.password,
+                            phone: memberData.phone_primary,
+                            member_id: memberData.id
+                        };
+
+                        const response = await setMemberPassword(passwordData);
+                        document.querySelector('.modal-overlay')?.remove();
+                        showSuccessMessage('Password set successfully! You can now login.');
+                        clearTempMemberData();
+                        setActiveScreen('welcome');
+                    } catch (error) {
+                        showErrorMessage(`Password setup failed: ${error.message}`);
+                    }
+                } catch (validationError) {
+                    // Catch validation errors from getFormData()
+                    showErrorMessage(validationError.message);
                 }
             }
         }

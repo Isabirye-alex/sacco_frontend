@@ -1,5 +1,6 @@
-// Form Builders
 
+// Form Builders
+import { getCachedMemberData } from './api.js';
 export function createDepositForm(accounts) {
     const container = document.createElement('div');
 
@@ -104,6 +105,7 @@ export function createTransferForm(accounts) {
     };
 }
 
+// 1. Accept the user object (or branchId directly) as a second parameter
 export function createLoanApplicationForm(products) {
     const container = document.createElement('div');
 
@@ -120,6 +122,13 @@ export function createLoanApplicationForm(products) {
         placeholder: 'Enter desired amount'
     });
 
+    // 🚀 NEW: Add an input for Term Months
+    const termInput = createInput('term_months', 'Loan Term (Months)', 'number', '12', {
+        min: '1',
+        max: '60',
+        placeholder: 'e.g., 12'
+    });
+
     const purposeInput = createInput('purpose', 'Purpose of Loan', 'text', '', {
         placeholder: 'e.g., Business expansion'
     });
@@ -129,8 +138,10 @@ export function createLoanApplicationForm(products) {
         max: '5'
     });
 
+    // Append everything to the container
     container.appendChild(createFormGroup('Loan Product', productSelect));
     container.appendChild(createFormGroup('Loan Amount', amountInput));
+    container.appendChild(createFormGroup('Loan Term (Months)', termInput)); // 🚀 Append new field
     container.appendChild(createFormGroup('Purpose', purposeInput));
     container.appendChild(createFormGroup('Number of Guarantors', guarantorsInput));
 
@@ -140,13 +151,21 @@ export function createLoanApplicationForm(products) {
     container.appendChild(noteEl);
 
     return {
-        element: container, getFormData: () => ({
-            productId: productSelect.value,
-            amount: amountInput.value,
-            purpose: purposeInput.value,
-            guarantorCount: parseInt(guarantorsInput.value) || 1
-        })
+        element: container,
+        getFormData: () => {
+            const cachedUser = getCachedMemberData();
+
+            return {
+                productId: productSelect.value,
+                amount: parseFloat(amountInput.value || 0),
+                termMonths: parseInt(termInput.value || 12), // 🚀 Capture the term
+                purpose: purposeInput.value,
+                branch_id: cachedUser?.branch_id || cachedUser?.branch?.id || null,
+                guarantorCount: parseInt(guarantorsInput.value) || 1
+            };
+        }
     };
+
 }
 
 export function createLoanPaymentForm(loans) {
@@ -252,6 +271,22 @@ export function createLoginForm() {
 export function createRegisterForm({ branches = [], genders = [], statuses = [], maritalStatuses = [] } = {}) {
     const container = document.createElement('div');
 
+    // Add mandatory fields notification at the top
+    const mandatoryNote = document.createElement('div');
+    mandatoryNote.style.cssText = 'background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 20px;';
+    mandatoryNote.innerHTML = `
+        <p style="margin: 0 0 8px 0; font-weight: 600; color: #856404;">Mandatory Fields</p>
+        <ul style="margin: 0; padding-left: 20px; color: #856404; font-size: 13px;">
+            <li>First Name</li>
+            <li>Last Name</li>
+            <li>Branch</li>
+            <li>Gender</li>
+            <li>Password (minimum 8 characters)</li>
+            <li>Confirm Password (must match)</li>
+        </ul>
+    `;
+    container.appendChild(mandatoryNote);
+
     // Inline helper to generate dropdown select elements dynamically
     const createSelect = (id, labelText, optionsList, isOptional = false) => {
         const select = document.createElement('select');
@@ -302,7 +337,7 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
     // --- OPTIONAL FIELDS ---
     const middleNameInput = createInput('middle_name', 'Middle Name (Optional)', 'text', '');
     const emailInput = createInput('email', 'Email Address (Optional)', 'email', '');
-    
+
     const dobInput = createInput('date_of_birth', 'Date of Birth (Optional)', 'date', '');
     const nationalIdInput = createInput('national_id', 'National ID (Optional)', 'text', '');
 
@@ -314,20 +349,36 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
     const countryInput = createInput('country', 'Country (Optional)', 'text', '');
     const districtInput = createInput('district', 'District (Optional)', 'text', '');
     const villageInput = createInput('village', 'Village (Optional)', 'text', '');
-    const passwordInput = passwordInput('password', 'Password (Required)', 'text', '');
-    const confirmPasswordInput = passwordInput('confirm_password', 'Confirm Password (Required)', 'text', '');
-    
+    const passwordInput = createInput('password', 'Password (Required)', 'password', '');
+    const confirmPasswordInput = createInput('confirm_password', 'Confirm Password (Required)', 'password', '');
+
     // --- APPENDING TO CONTAINER ---
+    // Helper function to add helper text
+    const addHelperText = (text) => {
+        const helper = document.createElement('p');
+        helper.textContent = text;
+        helper.style.cssText = 'font-size: 12px; color: #666; margin: -10px 0 12px 0; padding: 0;';
+        container.appendChild(helper);
+    };
+
     // Required Sections
-    container.appendChild(createFormGroup('First Name', firstNameInput));
+    container.appendChild(createFormGroup('First Name *', firstNameInput));
+    addHelperText('Your legal first name as it appears in official documents');
+
     container.appendChild(createFormGroup('Middle Name (Optional)', middleNameInput));
-    container.appendChild(createFormGroup('Last Name', lastNameInput));
-    container.appendChild(createFormGroup('Branch', branchSelect));
-    container.appendChild(createFormGroup('Gender', genderSelect));
+
+    container.appendChild(createFormGroup('Last Name *', lastNameInput));
+    addHelperText('Your legal surname as it appears in official documents');
+
+    container.appendChild(createFormGroup('Branch *', branchSelect));
+    addHelperText('Select the branch where you will be a member');
+
+    container.appendChild(createFormGroup('Gender *', genderSelect));
+    addHelperText('Select your gender identity');
 
     // Optional Sections
     container.appendChild(createFormGroup('Email Address (Optional)', emailInput));
-    
+
     container.appendChild(createFormGroup('Date of Birth (Optional)', dobInput));
     container.appendChild(createFormGroup('National ID (Optional)', nationalIdInput));
     container.appendChild(createFormGroup('Marital Status (Optional)', maritalStatusSelect));
@@ -336,38 +387,99 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
     container.appendChild(createFormGroup('Country (Optional)', countryInput));
     container.appendChild(createFormGroup('District (Optional)', districtInput));
     container.appendChild(createFormGroup('Village (Optional)', villageInput));
-    container.appendChild(createFormGroup('Password (Required)', passwordInput));
-    container.appendChild(createFormGroup('Confirm Password (Required)', confirmPasswordInput));
+
+    // Password Note
+    const passwordNote = document.createElement('p');
+    passwordNote.textContent = 'This password will be used to access your member portal.';
+    passwordNote.style.cssText = 'font-size: 12px; color: #666; margin-bottom: 12px; background-color: #f5f5f5; padding: 8px 12px; border-left: 3px solid #007AFF; border-radius: 3px;';
+    container.appendChild(passwordNote);
+
+    container.appendChild(createPasswordFormGroup('Password *', passwordInput));
+    addHelperText('Create a strong password with at least 8 characters (use uppercase, lowercase, numbers, and symbols for security)');
+
+    container.appendChild(createPasswordFormGroup('Confirm Password *', confirmPasswordInput));
+    addHelperText('Re-enter your password exactly as typed above to ensure accuracy');
     return {
         element: container,
         getFormData: () => {
             const valueOrNull = (input) => input.value.trim() === '' ? null : input.value;
 
+            // Validate mandatory fields
+            if (!firstNameInput.value.trim()) {
+                throw new Error('First Name is required');
+            }
+            if (!lastNameInput.value.trim()) {
+                throw new Error('Last Name is required');
+            }
+            if (!branchSelect.value) {
+                throw new Error('Branch is required');
+            }
+            if (!genderSelect.value) {
+                throw new Error('Gender is required');
+            }
+            if (!passwordInput.value) {
+                throw new Error('Password is required');
+            }
+            if (!confirmPasswordInput.value) {
+                throw new Error('Please confirm your password');
+            }
+
+            // Validate password match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                throw new Error('Passwords do not match');
+            }
+            if (passwordInput.value.length < 8) {
+                throw new Error('Password must be at least 8 characters long');
+            }
+
+            const email = valueOrNull(emailInput) || firstNameInput.value.toLowerCase() + '@example.com';
+
             return {
-                first_name: firstNameInput.value,
-                middle_name: valueOrNull(middleNameInput),
-                last_name: lastNameInput.value,
-                email: valueOrNull(emailInput),
+                // Nest member fields under "member" object
+                member: {
+                    first_name: firstNameInput.value,
+                    middle_name: valueOrNull(middleNameInput),
+                    last_name: lastNameInput.value,
+                    email: email,
+                    branch_id: branchSelect.value,
+                    gender_id: genderSelect.value,
+                    date_of_birth: valueOrNull(dobInput),
+                    national_id: valueOrNull(nationalIdInput),
+                    marital_status_id: maritalStatusSelect.value === '' ? null : maritalStatusSelect.value,
+                    phone_primary: valueOrNull(phonePrimaryInput),
+                    phone_secondary: valueOrNull(phoneSecondaryInput),
+                    country: valueOrNull(countryInput),
+                    district: valueOrNull(districtInput),
+                    village: valueOrNull(villageInput),
 
-                branch_id: branchSelect.value === '' ? null : branchSelect.value,
-                gender_id: genderSelect.value === '' ? null : genderSelect.value,
-
-                date_of_birth: valueOrNull(dobInput),
-                national_id: valueOrNull(nationalIdInput),
-                marital_status_id: maritalStatusSelect.value === '' ? null : maritalStatusSelect.value,
-                phone_primary: valueOrNull(phonePrimaryInput),
-                phone_secondary: valueOrNull(phoneSecondaryInput),
-                country: valueOrNull(countryInput),
-                district: valueOrNull(districtInput),
-                village: valueOrNull(villageInput),
-                password: passwordInput.value
-                
+                },
+                // Nest user fields under "user" object
+                user: {
+                    email: email,
+                    first_name: firstNameInput.value,
+                    last_name: lastNameInput.value,
+                    password: passwordInput.value,
+                    phone: valueOrNull(phonePrimaryInput)
+                }
             };
         }
+
     };
 }
 export function createPasswordSetupForm() {
     const container = document.createElement('div');
+
+    // Add mandatory fields notification at the top
+    const mandatoryNote = document.createElement('div');
+    mandatoryNote.style.cssText = 'background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 20px;';
+    mandatoryNote.innerHTML = `
+        <p style="margin: 0 0 8px 0; font-weight: 600; color: #856404;">Mandatory Fields</p>
+        <ul style="margin: 0; padding-left: 20px; color: #856404; font-size: 13px;">
+            <li>Password (minimum 8 characters)</li>
+            <li>Confirm Password (must match)</li>
+        </ul>
+    `;
+    container.appendChild(mandatoryNote);
 
     const passwordInput = createInput('password', 'Password', 'password', '', {
         required: 'true',
@@ -379,15 +491,52 @@ export function createPasswordSetupForm() {
         minlength: '8'
     });
 
-    container.appendChild(createFormGroup('Password', passwordInput));
-    container.appendChild(createFormGroup('Confirm Password', confirmPasswordInput));
+    // Password Note
+    const passwordNote = document.createElement('p');
+    passwordNote.textContent = 'This password will be used to access your member portal.';
+    passwordNote.style.cssText = 'font-size: 12px; color: #666; margin-bottom: 12px; background-color: #f5f5f5; padding: 8px 12px; border-left: 3px solid #007AFF; border-radius: 3px;';
+    container.appendChild(passwordNote);
+
+    container.appendChild(createPasswordFormGroup('Password *', passwordInput));
+
+    // Add helper text for password
+    const passwordHelper = document.createElement('p');
+    passwordHelper.textContent = 'Create a strong password with at least 8 characters (use uppercase, lowercase, numbers, and symbols for security)';
+    passwordHelper.style.cssText = 'font-size: 12px; color: #666; margin: -10px 0 12px 0; padding: 0;';
+    container.appendChild(passwordHelper);
+
+    container.appendChild(createPasswordFormGroup('Confirm Password *', confirmPasswordInput));
+
+    // Add helper text for confirm password
+    const confirmHelper = document.createElement('p');
+    confirmHelper.textContent = 'Re-enter your password exactly as typed above to ensure accuracy';
+    confirmHelper.style.cssText = 'font-size: 12px; color: #666; margin: -10px 0 12px 0; padding: 0;';
+    container.appendChild(confirmHelper);
 
     return {
         element: container,
-        getFormData: () => ({
-            password: passwordInput.value,
-            confirmPassword: confirmPasswordInput.value
-        })
+        getFormData: () => {
+            // Validate password is filled
+            if (!passwordInput.value) {
+                throw new Error('Password is required');
+            }
+            if (!confirmPasswordInput.value) {
+                throw new Error('Please confirm your password');
+            }
+
+            // Validate password match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                throw new Error('Passwords do not match');
+            }
+            if (passwordInput.value.length < 8) {
+                throw new Error('Password must be at least 8 characters long');
+            }
+
+            return {
+                password: passwordInput.value,
+                confirmPassword: confirmPasswordInput.value
+            };
+        }
     };
 }
 
@@ -419,6 +568,67 @@ function createFormGroup(label, input) {
 
     group.appendChild(labelEl);
     group.appendChild(input);
+
+    return group;
+}
+
+function createPasswordFormGroup(label, input) {
+    const group = document.createElement('div');
+    group.style.cssText = 'margin-bottom: 16px;';
+
+    const labelEl = document.createElement('label');
+    labelEl.textContent = label;
+    labelEl.style.cssText = `
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #333;
+    `;
+
+    // Container for input and toggle button
+    const inputContainer = document.createElement('div');
+    inputContainer.style.cssText = 'position: relative; display: flex; align-items: center;';
+
+    input.style.cssText = `
+        width: 100%;
+        padding: 10px 12px;
+        padding-right: 40px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 14px;
+        box-sizing: border-box;
+    `;
+
+    // Toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.textContent = 'Show';
+    toggleBtn.style.cssText = `
+        position: absolute;
+        right: 8px;
+        background: none;
+        border: none;
+        color: #007AFF;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 8px;
+    `;
+
+    toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        toggleBtn.textContent = isPassword ? 'Hide' : 'Show';
+    });
+
+    inputContainer.appendChild(input);
+    inputContainer.appendChild(toggleBtn);
+
+    group.appendChild(labelEl);
+    group.appendChild(inputContainer);
 
     return group;
 }
