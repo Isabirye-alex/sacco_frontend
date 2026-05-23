@@ -22,7 +22,13 @@ let cachedMemberData = null;
 
 export function setCachedMemberData(memberData) {
     cachedMemberData = memberData;
-    // Also store member_id for API calls that need it
+    console.log('DEBUG setCachedMemberData: Caching member data:', memberData);
+    if (memberData?.user?.id) {
+        localStorage.setItem('current_user_id', memberData.user.id);
+        console.log('DEBUG setCachedMemberData: Stored user.id:', memberData.user.id);
+    } else {
+        console.warn('DEBUG setCachedMemberData: user.id not found in memberData');
+    }
     if (memberData?.id || memberData?.member_id) {
         localStorage.setItem('current_member_id', memberData.id || memberData.member_id);
     }
@@ -34,6 +40,14 @@ export function getCachedMemberData() {
 
 export function getCurrentMemberId() {
     return cachedMemberData?.id || cachedMemberData?.member_id || localStorage.getItem('current_member_id');
+}
+
+export function getCurrentUserId() {
+    const cachedUserId = cachedMemberData?.user?.id;
+    const storedUserId = localStorage.getItem('current_user_id');
+    const userId = cachedUserId || storedUserId;
+    console.log('DEBUG: getCurrentUserId() - cachedMemberData.user.id:', cachedUserId, 'storedUserId:', storedUserId, 'final:', userId);
+    return userId;
 }
 
 export function setCurrentMemberId(memberId) {
@@ -163,7 +177,7 @@ export function transformMemberToProfile(memberData) {
         sharesValue: calculatedShares,
         totalSavings: calculatedSavings,
         guarantors: '0 active',
-
+        user_id: memberData.user.id,
         branch_id: memberData.branch_id || memberData.branch?.id || null
     };
 }
@@ -316,25 +330,29 @@ export async function fetchProfile() {
 
 // Form Submission Functions
 
-export async function submitDeposit(amount, accountId, reference = '', paymentMethod = 'CASH') {
+export async function submitDeposit(amount, accountId, processedById, reference = '', paymentChannelCode = 'MOBILE_MONEY') {
     if (!accountId) throw new Error('Account ID is required');
+    if (!processedById) {
+        console.error('DEBUG submitDeposit: processedById is missing/null', { processedById, type: typeof processedById });
+        throw new Error('Processed By (User ID) is required - User ID not found. Please ensure you are logged in.');
+    }
     if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
 
-    // Make sure this points to your specific deposit processing route
-    const url = `${API_BASE_URL}/savings/deposit`; 
+    const url = `${API_BASE_URL}/savings/deposit`;
+
+    console.log('DEBUG submitDeposit: Submitting with:', { accountId, amount, processedById, reference, paymentChannelCode });
 
     return await apiFetch(url, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-            account_id: accountId,                        // Matches backend mapping
+            account_id: accountId,
             amount: parseFloat(amount),
-            reference: reference || `DEP-${Date.now()}`,  // Ensures unique reference tracking
-            description: `Savings Deposit via ${paymentMethod}`,
-            transaction_date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
-            
-            // Optional: Send payment method details if your backend dynamically
-            // maps GL Accounts (e.g., Cash vs. Mobile Money GL)
-            payment_method: paymentMethod 
+            reference: reference || `DEP-${Date.now()}`,
+            processed_by_id: processedById,
+            payment_channel_code: paymentChannelCode
         })
     });
 }

@@ -1,7 +1,18 @@
+// 🎯 FIX: Ensure apiFetch is explicitly imported so your network request works!
+import { getCachedMemberData, apiFetch } from './api.js';
 
-// Form Builders
-import { getCachedMemberData } from './api.js';
-export function createDepositForm(accounts) {
+export async function fetchPaymentChannels() {
+    const url = `http://127.0.0.1:8080/api/v1/savings/payment-channels`;
+    try {
+        const response = await apiFetch(url, { method: 'GET' });
+        console.log("Successfully fetched payment channels:", response);
+        return response;
+    } catch (error) {
+        console.error("Backend failed to return payment channels:", error);
+        return []; // Dynamic fallback to prevent UI breaking crashes
+    }
+}
+export function createDepositForm(accounts, paymentChannels = []) {
     const container = document.createElement('div');
 
     // 1. Account Dropdown Selection Field
@@ -19,12 +30,13 @@ export function createDepositForm(accounts) {
         placeholder: 'Enter amount'
     });
 
-    // This allows the ledger mapping to dynamically switch between Cash and Bank asset lines
-    const paymentMethodSelect = createSelect('paymentMethod', 'Select Payment Method', [
-        { value: 'CASH', label: 'Cash Over The Counter' },
-        { value: 'MOBILE_MONEY', label: 'Mobile Money (MTN / Airtel)' },
-        { value: 'BANK_TRANSFER', label: 'Bank Transfer / EFT' }
-    ]);
+    // 3. Dynamic Payment Method Selection Field
+    const paymentMethodSelect = createSelect('paymentMethod', 'Select Payment Method',
+        paymentChannels.map(channel => ({
+            value: channel.channel_code,
+            label: channel.channel_name
+        }))
+    );
 
     // 4. Reference / Description Input Field
     const descriptionInput = createInput('description', 'Reference / Description', 'text', '', {
@@ -34,20 +46,21 @@ export function createDepositForm(accounts) {
     // Append all form elements to the wrapper DOM node
     container.appendChild(createFormGroup('Account', accountSelect));
     container.appendChild(createFormGroup('Amount', amountInput));
-    container.appendChild(createFormGroup('Payment Method', paymentMethodSelect)); // 🚀 Append new selector
+    container.appendChild(createFormGroup('Payment Method', paymentMethodSelect));
     container.appendChild(createFormGroup('Description / Reference', descriptionInput));
 
     return {
-        element: container, 
+        element: container,
         getFormData: () => ({
             accountId: accountSelect.value,
             amount: amountInput.value,
-            description: descriptionInput.value,
-            
-            paymentMethod: paymentMethodSelect.value 
+            reference: descriptionInput.value,
+            paymentChannelCode: paymentMethodSelect.value
         })
     };
 }
+
+
 export function createWithdrawForm(accounts) {
     const container = document.createElement('div');
 
@@ -311,7 +324,7 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
 
         const placeholder = document.createElement('option');
         placeholder.value = '';
-        placeholder.textContent = `-- Select ${labelText} --`;
+        placeholder.textContent = `Select ${labelText}`;
         select.appendChild(placeholder);
 
         if (Array.isArray(optionsList)) {

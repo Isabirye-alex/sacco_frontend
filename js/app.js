@@ -9,13 +9,13 @@ import {
     submitLoanApplication, submitLoanPayment, submitProfileUpdate,
     fetchMemberData, isUserLoggedIn, loginUser, registerMember, setMemberPassword,
     getTempMemberData, clearTempMemberData, setCurrentMemberId, fetchLoanProducts,
-    fetchProfile
+    fetchProfile, getCurrentUserId
 } from './api.js';
 import { showModal, showSuccessMessage, showErrorMessage } from './modals.js';
 import {
     createDepositForm, createWithdrawForm, createTransferForm,
     createLoanApplicationForm, createLoanPaymentForm, createEditProfileForm,
-    createLoginForm, createRegisterForm, createPasswordSetupForm
+    createLoginForm, createRegisterForm, createPasswordSetupForm, fetchPaymentChannels
 } from './forms.js';
 
 const screenTitles = {
@@ -213,35 +213,48 @@ function showDepositForm(accounts) {
         return;
     }
 
-    const { element, getFormData } = createDepositForm(accounts);
+    // Fetch payment channels
+    fetchPaymentChannels()
+        .then(paymentChannelsResponse => {
+            const paymentChannels = Array.isArray(paymentChannelsResponse) ? paymentChannelsResponse : (paymentChannelsResponse.data || []);
+            const { element, getFormData } = createDepositForm(accounts, paymentChannels);
 
-    showModal('Make a Deposit', element, [
-        {
-            label: 'Cancel',
-            onClick: () => document.querySelector('.modal-overlay')?.remove()
-        },
-        {
-            label: 'Submit',
-            primary: true,
-            onClick: async () => {
-                const data = getFormData();
-                if (!data.accountId || !data.amount || parseFloat(data.amount) <= 0) {
-                    showErrorMessage('Please fill in all required fields');
-                    return;
-                }
+            showModal('Make a Deposit', element, [
+                {
+                    label: 'Cancel',
+                    onClick: () => document.querySelector('.modal-overlay')?.remove()
+                },
+                {
+                    label: 'Submit',
+                    primary: true,
+                    onClick: async () => {
+                        const data = getFormData();
+                        if (!data.accountId || !data.amount || parseFloat(data.amount) <= 0) {
+                            showErrorMessage('Please fill in all required fields');
+                            return;
+                        }
 
-                try {
-                    await submitDeposit(data.amount, data.accountId, data.description);
-                    document.querySelector('.modal-overlay')?.remove();
-                    showSuccessMessage('Deposit successful!');
-                    memberData = null; // Refresh data
-                    loadScreenData(currentScreen);
-                } catch (error) {
-                    showErrorMessage(`Deposit failed: ${error.message}`);
+                        try {
+                            const userId = getCurrentUserId();
+                            if (!userId) {
+                                showErrorMessage('User not logged in');
+                                return;
+                            }
+                            await submitDeposit(data.amount, data.accountId, userId, data.reference, data.paymentChannelCode);
+                            document.querySelector('.modal-overlay')?.remove();
+                            showSuccessMessage('Deposit successful!');
+                            memberData = null; // Refresh data
+                            loadScreenData(currentScreen);
+                        } catch (error) {
+                            showErrorMessage(`Deposit failed: ${error.message}`);
+                        }
+                    }
                 }
-            }
-        }
-    ]);
+            ]);
+        })
+        .catch(error => {
+            showErrorMessage(`Failed to load payment channels: ${error.message}`);
+        });
 }
 
 function showWithdrawForm(accounts) {
@@ -528,6 +541,12 @@ function showLoginForm() {
 
                 try {
                     const response = await loginUser(data.email, data.password);
+                    // Fetch and cache member data after successful login
+                    try {
+                        await fetchMemberData();
+                    } catch (memberError) {
+                        console.warn('Could not fetch member data after login:', memberError);
+                    }
                     document.querySelector('.modal-overlay')?.remove();
                     showSuccessMessage('Login successful!');
                     memberData = null; // Refresh data
