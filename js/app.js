@@ -505,7 +505,7 @@ function attachGlobalHandlers() {
 function showLoginForm() {
     const { element, getFormData } = createLoginForm();
 
-    showModal('Login to MazaoSACCO', element, [
+    showModal('Login to Platform', element, [
         {
             label: 'Cancel',
             onClick: () => document.querySelector('.modal-overlay')?.remove()
@@ -535,8 +535,6 @@ function showLoginForm() {
 }
 
 async function showRegisterForm() {
-    // 1. Show a quick visual block or loading indicator if network speeds vary
-    // (Optional: depending on your app architecture)
 
     try {
         // 2. Fetch all dynamic lookup data concurrently from your endpoints

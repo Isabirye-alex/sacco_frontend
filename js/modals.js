@@ -55,7 +55,6 @@ function createModalElement(title, content, actions, options = { fullScreen: fal
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content';
     
-    // Natively handle layout geometry variations here
     if (options.fullScreen) {
         modalContent.style.cssText = `
             background: white;
@@ -98,7 +97,6 @@ function createModalElement(title, content, actions, options = { fullScreen: fal
     contentEl.className = 'modal-body-wrapper';
     
     if (options.fullScreen) {
-        // Full screen needs flex distribution to handle long scrolling forms comfortably
         contentEl.style.cssText = `
             flex: 1;
             overflow-y: auto;
@@ -116,7 +114,6 @@ function createModalElement(title, content, actions, options = { fullScreen: fal
     if (typeof content === 'string') {
         contentEl.innerHTML = content;
     } else {
-        // Apply responsive full sizing to standard wrapper nodes passed through variables
         if (options.fullScreen && content instanceof HTMLElement) {
             content.style.width = '100%';
             content.style.height = 'auto';

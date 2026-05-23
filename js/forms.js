@@ -314,7 +314,9 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
     const countryInput = createInput('country', 'Country (Optional)', 'text', '');
     const districtInput = createInput('district', 'District (Optional)', 'text', '');
     const villageInput = createInput('village', 'Village (Optional)', 'text', '');
-
+    const passwordInput = passwordInput('password', 'Password (Required)', 'text', '');
+    const confirmPasswordInput = passwordInput('confirm_password', 'Confirm Password (Required)', 'text', '');
+    
     // --- APPENDING TO CONTAINER ---
     // Required Sections
     container.appendChild(createFormGroup('First Name', firstNameInput));
@@ -334,7 +336,8 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
     container.appendChild(createFormGroup('Country (Optional)', countryInput));
     container.appendChild(createFormGroup('District (Optional)', districtInput));
     container.appendChild(createFormGroup('Village (Optional)', villageInput));
-
+    container.appendChild(createFormGroup('Password (Required)', passwordInput));
+    container.appendChild(createFormGroup('Confirm Password (Required)', confirmPasswordInput));
     return {
         element: container,
         getFormData: () => {
@@ -357,6 +360,8 @@ export function createRegisterForm({ branches = [], genders = [], statuses = [],
                 country: valueOrNull(countryInput),
                 district: valueOrNull(districtInput),
                 village: valueOrNull(villageInput),
+                password: passwordInput.value
+                
             };
         }
     };
