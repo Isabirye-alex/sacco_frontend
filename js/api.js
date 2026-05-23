@@ -316,19 +316,25 @@ export async function fetchProfile() {
 
 // Form Submission Functions
 
-export async function submitDeposit(amount, accountId, description = '') {
+export async function submitDeposit(amount, accountId, reference = '', paymentMethod = 'CASH') {
     if (!accountId) throw new Error('Account ID is required');
     if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
 
-    const url = `${API_BASE_URL}/savings/transactions`;
+    // Make sure this points to your specific deposit processing route
+    const url = `${API_BASE_URL}/savings/deposit`; 
+
     return await apiFetch(url, {
         method: 'POST',
         body: JSON.stringify({
-            savings_account_id: accountId,
+            account_id: accountId,                        // Matches backend mapping
             amount: parseFloat(amount),
-            transaction_type: 'deposit',
-            reference: description,
-            created_at: new Date().toISOString()
+            reference: reference || `DEP-${Date.now()}`,  // Ensures unique reference tracking
+            description: `Savings Deposit via ${paymentMethod}`,
+            transaction_date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+            
+            // Optional: Send payment method details if your backend dynamically
+            // maps GL Accounts (e.g., Cash vs. Mobile Money GL)
+            payment_method: paymentMethod 
         })
     });
 }

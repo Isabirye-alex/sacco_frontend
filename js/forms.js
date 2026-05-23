@@ -4,6 +4,7 @@ import { getCachedMemberData } from './api.js';
 export function createDepositForm(accounts) {
     const container = document.createElement('div');
 
+    // 1. Account Dropdown Selection Field
     const accountSelect = createSelect('account', 'Select Account',
         accounts.map(acc => ({
             value: acc.id,
@@ -11,29 +12,42 @@ export function createDepositForm(accounts) {
         }))
     );
 
+    // 2. Amount Input Field
     const amountInput = createInput('amount', 'Amount (UGX)', 'number', '0', {
         min: '0',
         step: '1000',
         placeholder: 'Enter amount'
     });
 
-    const descriptionInput = createInput('description', 'Description (Optional)', 'text', '', {
-        placeholder: 'e.g., Monthly savings'
+    // This allows the ledger mapping to dynamically switch between Cash and Bank asset lines
+    const paymentMethodSelect = createSelect('paymentMethod', 'Select Payment Method', [
+        { value: 'CASH', label: 'Cash Over The Counter' },
+        { value: 'MOBILE_MONEY', label: 'Mobile Money (MTN / Airtel)' },
+        { value: 'BANK_TRANSFER', label: 'Bank Transfer / EFT' }
+    ]);
+
+    // 4. Reference / Description Input Field
+    const descriptionInput = createInput('description', 'Reference / Description', 'text', '', {
+        placeholder: 'e.g., Cash deposit / MoMo txn reference ID'
     });
 
+    // Append all form elements to the wrapper DOM node
     container.appendChild(createFormGroup('Account', accountSelect));
     container.appendChild(createFormGroup('Amount', amountInput));
-    container.appendChild(createFormGroup('Description', descriptionInput));
+    container.appendChild(createFormGroup('Payment Method', paymentMethodSelect)); // 🚀 Append new selector
+    container.appendChild(createFormGroup('Description / Reference', descriptionInput));
 
     return {
-        element: container, getFormData: () => ({
+        element: container, 
+        getFormData: () => ({
             accountId: accountSelect.value,
             amount: amountInput.value,
-            description: descriptionInput.value
+            description: descriptionInput.value,
+            
+            paymentMethod: paymentMethodSelect.value 
         })
     };
 }
-
 export function createWithdrawForm(accounts) {
     const container = document.createElement('div');
 
