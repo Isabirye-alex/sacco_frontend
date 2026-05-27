@@ -361,15 +361,15 @@ export async function submitWithdraw(amount, accountId, description = '') {
     if (!accountId) throw new Error('Account ID is required');
     if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
 
-    const url = `${API_BASE_URL}/savings/transactions`;
+    const url = `${API_BASE_URL}/savings/withdraw`;
     return await apiFetch(url, {
         method: 'POST',
         body: JSON.stringify({
-            savings_account_id: accountId,
+            account_id: accountId,
             amount: parseFloat(amount),
-            transaction_type: 'withdrawal',
-            reference: description,
-            created_at: new Date().toISOString()
+            reference: description || `WITH-${Date.now()}`,
+            payment_channel_code: 'CASH', // default channel for manual portal withdrawals
+            description: description || 'Savings Withdrawal'
         })
     });
 }
@@ -379,16 +379,15 @@ export async function submitTransfer(fromAccountId, toMemberId, amount, descript
     if (!toMemberId) throw new Error('To Member ID is required');
     if (!amount || parseFloat(amount) <= 0) throw new Error('Amount must be greater than 0');
 
-    const url = `${API_BASE_URL}/savings/transactions`;
+    const url = `${API_BASE_URL}/savings/transfer`;
     return await apiFetch(url, {
         method: 'POST',
         body: JSON.stringify({
             from_account_id: fromAccountId,
-            to_member_id: toMemberId,
+            to_account_id: toMemberId,
             amount: parseFloat(amount),
-            transaction_type: 'transfer',
-            reference: description,
-            created_at: new Date().toISOString()
+            reference: description || `TRF-${Date.now()}`,
+            description: description || 'Fund Transfer'
         })
     });
 }
