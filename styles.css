@@ -349,6 +349,11 @@ body {
     padding: 24px 28px 40px;
 }
 
+.screen.welcome-mode {
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
 .screen-inner {
     display: none;
 }

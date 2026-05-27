@@ -1,161 +1,596 @@
 <div class="screen-inner" id="screen-welcome">
-    <div class="welcome-hero">
-        <div class="hero-content">
-            <h1>Welcome to LittleSACCO?</h1>
-            <p>Your trusted partner for savings and credit solutions</p>
-        </div>
-        <div class="hero-image">
-            <svg width="300" height="200" viewBox="0 0 300 200" fill="none">
-                <rect width="300" height="200" fill="#eaf3de" />
-                <circle cx="150" cy="100" r="60" fill="#3b6d11" opacity="0.1" />
-                <path d="M150 60L180 100L160 120L150 110L140 120L120 100Z" fill="#3b6d11" opacity="0.6" />
-            </svg>
-        </div>
-    </div>
-
-    <div class="welcome-section">
-        <div class="section-header">
-            <h2>Our Savings Products</h2>
-            <p>Choose the right savings plan for your future</p>
-        </div>
-        <div class="products-grid" id="savings-products">
-            <!-- Will be populated by JS -->
-        </div>
-    </div>
-
-    <div class="welcome-section">
-        <div class="section-header">
-            <h2>Our Loan Products</h2>
-            <p>Flexible loan options for your needs</p>
-        </div>
-        <div class="products-grid" id="loan-products">
-            <!-- Will be populated by JS -->
-        </div>
-    </div>
-
-    <div class="welcome-cta">
-        <div class="cta-content">
-            <h3>Ready to join LittleSACCO?</h3>
-            <p>Take control of your financial future today. Become a member and access all our services.</p>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-                <button class="cta-button" id="register-btn">
-                    <i class="ti ti-user-plus" aria-hidden="true"></i>
-                    Register Now
+    <!-- Sticky Header/Nav Bar -->
+    <header class="welcome-nav">
+        <div class="nav-container">
+            <div class="brand-logo">
+                <div class="logo-icon">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M9 2L15 5.5V12.5L9 16L3 12.5V5.5L9 2Z" fill="white" fill-opacity="0.9" />
+                        <path d="M9 6L12 7.75V11.25L9 13L6 11.25V7.75L9 6Z" fill="white" fill-opacity="0.3" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="logo-main">Little</span><span class="logo-highlight">SACCO</span>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#savings-section" class="nav-link-item">Savings Plans</a>
+                <a href="#loans-section" class="nav-link-item">Loan Products</a>
+                <a href="#features-section" class="nav-link-item">Why Us</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="nav-btn-secondary login-btn-trigger">
+                    <i class="ti ti-login"></i> Login
                 </button>
-                <button class="cta-button" id="login-btn" style="background-color: #555;">
-                    <i class="ti ti-login" aria-hidden="true"></i>
-                    Login
+                <button class="nav-btn-primary register-btn-trigger">
+                    <i class="ti ti-user-plus"></i> Join SACCO
                 </button>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="welcome-features">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="ti ti-shield-check" aria-hidden="true"></i>
+    <div class="welcome-content-wrap">
+        <!-- Hero Section -->
+        <section class="welcome-hero-section">
+            <div class="hero-container">
+                <div class="hero-info">
+                    <div class="hero-badge">Smart Wealth Management</div>
+                    <h1>Grow Your Wealth, Secure Your Future</h1>
+                    <p>Access high-yield savings plans, flexible credit facilities, and premium financial tools. Join
+                        the modern way of cooperative banking today.</p>
+
+                    <div class="hero-actions">
+                        <button class="btn-hero-primary register-btn-trigger">
+                            Get Started Now <i class="ti ti-arrow-right"></i>
+                        </button>
+                        <a href="#savings-section" class="btn-hero-secondary">
+                            Explore Products
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">Up to 12%</span>
+                            <span class="stat-label">Savings Interest</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">Instant</span>
+                            <span class="stat-label">Loan Approval</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">10k+</span>
+                            <span class="stat-label">Active Members</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <!-- Premium Financial Growth SVG Illustration -->
+                    <svg viewBox="0 0 500 400" class="hero-svg">
+                        <defs>
+                            <linearGradient id="grad-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#4caf6e" />
+                                <stop offset="100%" stop-color="#3b6d11" />
+                            </linearGradient>
+                            <linearGradient id="grad-glow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#4caf6e" stop-opacity="0.25" />
+                                <stop offset="100%" stop-color="#4caf6e" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Grid Lines -->
+                        <line x1="50" y1="350" x2="450" y2="350" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+                        <line x1="50" y1="280" x2="450" y2="280" stroke="rgba(255,255,255,0.06)"
+                            stroke-dasharray="5 5" />
+                        <line x1="50" y1="210" x2="450" y2="210" stroke="rgba(255,255,255,0.06)"
+                            stroke-dasharray="5 5" />
+                        <line x1="50" y1="140" x2="450" y2="140" stroke="rgba(255,255,255,0.06)"
+                            stroke-dasharray="5 5" />
+                        <line x1="50" y1="70" x2="450" y2="70" stroke="rgba(255,255,255,0.06)" stroke-dasharray="5 5" />
+
+                        <!-- Growth Area/Path -->
+                        <path d="M 50 320 C 150 290, 200 180, 300 150 C 370 128, 400 90, 450 70 L 450 350 L 50 350 Z"
+                            fill="url(#grad-glow)" />
+                        <path d="M 50 320 C 150 290, 200 180, 300 150 C 370 128, 400 90, 450 70"
+                            stroke="url(#grad-accent)" stroke-width="4" stroke-linecap="round" />
+
+                        <!-- Floating Glassmorphic Card 1 -->
+                        <rect x="280" y="200" width="150" height="80" rx="12" fill="rgba(255,255,255,0.08)"
+                            stroke="rgba(255,255,255,0.15)" stroke-width="1.5" style="backdrop-filter: blur(8px);" />
+                        <circle cx="320" cy="240" r="18" fill="rgba(76,175,110,0.2)" />
+                        <path d="M 314 243 L 320 237 L 326 243" stroke="#6ed48a" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <text x="350" y="235" fill="rgba(255,255,255,0.5)" font-size="10"
+                            font-family="Inter, sans-serif">SAVINGS</text>
+                        <text x="350" y="255" fill="white" font-size="16" font-weight="bold"
+                            font-family="Inter, sans-serif">+12.4%</text>
+
+                        <!-- Floating Glassmorphic Card 2 (Security) -->
+                        <rect x="70" y="90" width="160" height="70" rx="12" fill="rgba(255,255,255,0.08)"
+                            stroke="rgba(255,255,255,0.15)" stroke-width="1.5" style="backdrop-filter: blur(8px);" />
+                        <circle cx="105" cy="125" r="18" fill="rgba(76,175,110,0.2)" />
+                        <!-- Shield SVG icon inside circle -->
+                        <path
+                            d="M 100 119 L 105 117 L 110 119 L 110 125 C 110 129, 105 132, 105 132 C 105 132, 100 129, 100 125 Z"
+                            fill="none" stroke="#6ed48a" stroke-width="1.5" />
+                        <text x="135" y="120" fill="rgba(255,255,255,0.5)" font-size="10"
+                            font-family="Inter, sans-serif">SECURITY</text>
+                        <text x="135" y="138" fill="white" font-size="13" font-weight="bold"
+                            font-family="Inter, sans-serif">100% Insured</text>
+
+                        <!-- Data Points -->
+                        <circle cx="50" cy="320" r="5" fill="#6ed48a" stroke="white" stroke-width="1.5" />
+                        <circle cx="300" cy="150" r="5" fill="#6ed48a" stroke="white" stroke-width="1.5" />
+                        <circle cx="450" cy="70" r="5" fill="#6ed48a" stroke="white" stroke-width="1.5" />
+                    </svg>
+                </div>
             </div>
-            <h4>Secure & Safe</h4>
-            <p>Your funds are protected by our organization</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="ti ti-trending-up" aria-hidden="true"></i>
+        </section>
+
+        <!-- Savings Section -->
+        <section class="welcome-section" id="savings-section">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-badge">GROW</span>
+                    <h2>Our Savings Products</h2>
+                    <p>High-yield, secure savings accounts tailored to support your short-term and long-term financial
+                        dreams.</p>
+                </div>
+                <div class="products-grid" id="savings-products">
+                    <!-- Will be populated by JS -->
+                </div>
             </div>
-            <h4>Great Returns</h4>
-            <p>Competitive interest rates on savings and investments</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="ti ti-headset" aria-hidden="true"></i>
+        </section>
+
+        <!-- Loans Section -->
+        <section class="welcome-section section-alt" id="loans-section">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-badge">BORROW</span>
+                    <h2>Our Loan Products</h2>
+                    <p>Access flexible, low-interest borrowing opportunities with hassle-free digital application and
+                        swift disbursement.</p>
+                </div>
+                <div class="products-grid" id="loan-products">
+                    <!-- Will be populated by JS -->
+                </div>
             </div>
-            <h4>24/7 Support</h4>
-            <p>Our team is always ready to help</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="ti ti-zap" aria-hidden="true"></i>
+        </section>
+
+        <!-- Features Showcase Section -->
+        <section class="welcome-section" id="features-section">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-badge">WHY CHOOSE US</span>
+                    <h2>Engineered for Financial Progress</h2>
+                    <p>Enjoy modern cooperative banking designed around transparency, growth, security, and
+                        accessibility.</p>
+                </div>
+                <div class="welcome-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="ti ti-shield-check" aria-hidden="true"></i>
+                        </div>
+                        <h4>Secure & Trusted</h4>
+                        <p>Fully regulated cooperative structure backed by state-of-the-art multi-layer encryption to
+                            keep your capital safe.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="ti ti-trending-up" aria-hidden="true"></i>
+                        </div>
+                        <h4>Unmatched Returns</h4>
+                        <p>Receive competitive dividends and interest rates on your contributions, maximizing your
+                            compound growth.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="ti ti-headset" aria-hidden="true"></i>
+                        </div>
+                        <h4>Dedicated Support</h4>
+                        <p>Our financial advisory and support team is on standby to assist with your inquiries and loan
+                            processing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="ti ti-zap" aria-hidden="true"></i>
+                        </div>
+                        <h4>100% Digital & Swift</h4>
+                        <p>Ditch the paperwork. Apply, monitor, save, and request loans instantly through our unified
+                            member portal.</p>
+                    </div>
+                </div>
             </div>
-            <h4>Fast & Easy</h4>
-            <p>Quick application process, instant approvals</p>
-        </div>
+        </section>
+
+        <!-- Call to Action Banner -->
+        <section class="welcome-cta-section">
+            <div class="cta-inner-container">
+                <div class="cta-overlay-pattern"></div>
+                <div class="cta-content">
+                    <h2>Unlock Your Financial Potential</h2>
+                    <p>Establish your membership today to start building capital, getting credit, and making progress.
+                    </p>
+                    <div class="cta-actions">
+                        <button class="btn-cta-primary register-btn-trigger">
+                            <i class="ti ti-user-plus"></i> Open Free Account
+                        </button>
+                        <button class="btn-cta-secondary login-btn-trigger">
+                            <i class="ti ti-login"></i> Member Sign In
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="welcome-footer-info">
+            <div class="footer-container">
+                <p>&copy; 2026 LittleSACCO Society. All rights reserved. Regulated by Sacco Societies Regulatory
+                    Authority.</p>
+            </div>
+        </footer>
     </div>
 </div>
 
 <style>
-    .welcome-hero {
+    /* Reset & Container layout */
+    #screen-welcome {
+        background-color: #f7f9f6;
+        color: #1a2e1a;
+        font-family: var(--font-sans);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Sticky Navigation Header */
+    .welcome-nav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 72px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 40px;
-        padding: 60px 40px;
-        background: linear-gradient(135deg, #3b6d11 0%, #4caf6e 100%);
-        border-radius: 12px;
-        margin-bottom: 40px;
-        color: white;
     }
 
-    .hero-content h1 {
-        margin: 0 0 12px 0;
-        font-size: 36px;
-        font-weight: 700;
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .hero-content p {
-        margin: 0;
-        font-size: 16px;
-        opacity: 0.95;
-    }
-
-    .hero-image {
+    .brand-logo .logo-icon {
+        width: 34px;
+        height: 34px;
+        background: linear-gradient(135deg, #4caf6e 0%, #3b6d11 100%);
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0 4px 10px rgba(76, 175, 110, 0.25);
     }
 
-    .welcome-section {
-        margin-bottom: 50px;
+    .brand-text {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
     }
 
-    .section-header {
-        margin-bottom: 24px;
-    }
-
-    .section-header h2 {
-        margin: 0 0 8px 0;
-        font-size: 24px;
-        font-weight: 600;
+    .brand-text .logo-main {
         color: #1a2e1a;
     }
 
-    .section-header p {
-        margin: 0;
-        font-size: 14px;
-        color: #666;
+    .brand-text .logo-highlight {
+        color: #3b6d11;
     }
 
+    .nav-links {
+        display: flex;
+        gap: 28px;
+    }
+
+    .nav-link-item {
+        color: #4a5d4e;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .nav-link-item:hover {
+        color: #3b6d11;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-btn-secondary {
+        background: transparent;
+        color: #3b6d11;
+        border: 1px solid transparent;
+        padding: 9px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+    }
+
+    .nav-btn-secondary:hover {
+        background: rgba(59, 109, 17, 0.05);
+    }
+
+    .nav-btn-primary {
+        background: linear-gradient(135deg, #3b6d11 0%, #4caf6e 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(59, 109, 17, 0.2);
+        transition: all 0.2s;
+    }
+
+    .nav-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 109, 17, 0.3);
+    }
+
+    /* Welcome Content Wrapper */
+    .welcome-content-wrap {
+        flex: 1;
+    }
+
+    /* Hero Section */
+    .welcome-hero-section {
+        background: linear-gradient(135deg, #0d210f 0%, #17381b 100%);
+        color: white;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-hero-section::before {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: rgba(76, 175, 110, 0.05);
+        filter: blur(100px);
+        border-radius: 50%;
+        top: -100px;
+        right: -100px;
+    }
+
+    .hero-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 48px;
+    }
+
+    .hero-info {
+        flex: 1.2;
+        max-width: 620px;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        background: rgba(110, 212, 138, 0.12);
+        color: #6ed48a;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(110, 212, 138, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .hero-info h1 {
+        font-size: 46px;
+        font-weight: 800;
+        line-height: 1.15;
+        margin-bottom: 20px;
+        letter-spacing: -0.03em;
+        background: linear-gradient(to right, #ffffff, #d3e2d6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-info p {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #b0c2b4;
+        margin-bottom: 32px;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 48px;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        background: #4caf6e;
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(76, 175, 110, 0.3);
+        transition: all 0.2s;
+    }
+
+    .btn-hero-primary:hover {
+        background: #41965e;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(76, 175, 110, 0.4);
+    }
+
+    .btn-hero-secondary {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 13px 26px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-hero-secondary:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 40px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 28px;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .stat-number {
+        font-size: 26px;
+        font-weight: 700;
+        color: #6ed48a;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #8fa694;
+        font-weight: 500;
+    }
+
+    .hero-visual {
+        flex: 0.8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-svg {
+        width: 100%;
+        max-width: 440px;
+        height: auto;
+        filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Sections */
+    .welcome-section {
+        padding: 80px 0;
+        background-color: #ffffff;
+    }
+
+    .welcome-section.section-alt {
+        background-color: #f7f9f6;
+    }
+
+    .section-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .section-header {
+        max-width: 600px;
+        margin-bottom: 48px;
+    }
+
+    .section-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #3b6d11;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .section-header h2 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a2e1a;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .section-header p {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #58695d;
+    }
+
+    /* Products Grid and Cards */
     .products-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
     }
 
     .product-card {
         background: white;
-        border: 2px solid #eee;
-        border-radius: 12px;
-        padding: 20px;
-        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
         display: flex;
         flex-direction: column;
         height: 100%;
+        position: relative;
     }
 
     .product-card:hover {
-        border-color: #3b6d11;
-        box-shadow: 0 8px 20px rgba(59, 109, 17, 0.1);
-        transform: translateY(-2px);
+        transform: translateY(-4px);
+        border-color: rgba(76, 175, 110, 0.3);
+        box-shadow: 0 12px 30px rgba(59, 109, 17, 0.08);
     }
 
     .product-header {
@@ -163,163 +598,327 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 12px;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
     }
 
     .product-name {
-        font-size: 18px;
-        font-weight: 600;
+        font-size: 20px;
+        font-weight: 700;
         color: #1a2e1a;
         margin: 0;
         flex: 1;
+        line-height: 1.3;
     }
 
     .product-code {
-        background: #3b6d11;
-        color: white;
-        font-size: 11px;
+        background: #eaf3de;
+        color: #3b6d11;
+        font-size: 10px;
         font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: 4px 10px;
+        border-radius: 6px;
         white-space: nowrap;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .product-description {
-        font-size: 13px;
-        color: #666;
-        margin: 0 0 16px 0;
+        font-size: 14px;
+        color: #58695d;
+        margin: 0 0 20px 0;
         line-height: 1.5;
+        flex-shrink: 0;
     }
 
     .product-details {
-        background: #f9f9f9;
-        padding: 12px;
-        border-radius: 8px;
+        background: #fcfdfe;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        padding: 16px;
+        border-radius: 12px;
         margin-bottom: 0;
         flex: 1;
-        overflow-y: auto;
-        max-height: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
     }
 
     .product-detail-row {
         display: flex;
         justify-content: space-between;
-        font-size: 12px;
-        margin-bottom: 8px;
+        font-size: 13px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
         gap: 8px;
     }
 
     .product-detail-row:last-child {
-        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
     }
 
     .product-detail-label {
-        color: #666;
+        color: #728276;
         font-weight: 500;
-        flex-shrink: 0;
     }
 
     .product-detail-value {
         color: #3b6d11;
         font-weight: 600;
         text-align: right;
-        flex: 1;
     }
 
-    .welcome-cta {
-        background: linear-gradient(135deg, #f0f8ed 0%, #e8f5e0 100%);
-        border: 2px solid #3b6d11;
-        border-radius: 12px;
-        padding: 50px 40px;
-        text-align: center;
-        margin: 50px 0;
-    }
-
-    .cta-content h3 {
-        margin: 0 0 12px 0;
-        font-size: 28px;
-        font-weight: 700;
-        color: #1a2e1a;
-    }
-
-    .cta-content p {
-        margin: 0 0 24px 0;
-        font-size: 16px;
-        color: #666;
-    }
-
-    .cta-button {
-        background: #3b6d11;
-        color: white;
-        border: none;
-        padding: 14px 32px;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .cta-button:hover {
-        background: #2d5209;
-    }
-
+    /* Features Grid */
     .welcome-features {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 24px;
-        margin-top: 40px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 28px;
     }
 
     .feature-card {
         background: white;
-        padding: 24px;
-        border-radius: 12px;
-        text-align: center;
-        border: 1px solid #eee;
+        padding: 32px 28px;
+        border-radius: 16px;
+        text-align: left;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
         transition: all 0.3s ease;
     }
 
     .feature-card:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        border-color: rgba(76, 175, 110, 0.2);
     }
 
     .feature-icon {
-        font-size: 40px;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: #eaf3de;
         color: #3b6d11;
-        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        background: #3b6d11;
+        color: white;
+        transform: scale(1.05);
     }
 
     .feature-card h4 {
-        margin: 0 0 8px 0;
+        margin: 0 0 10px 0;
         color: #1a2e1a;
-        font-size: 16px;
+        font-size: 17px;
+        font-weight: 600;
     }
 
     .feature-card p {
         margin: 0;
-        font-size: 13px;
-        color: #666;
-        line-height: 1.5;
+        font-size: 13.5px;
+        color: #58695d;
+        line-height: 1.55;
     }
 
-    @media (max-width: 768px) {
-        .welcome-hero {
+    /* CTA Section */
+    .welcome-cta-section {
+        padding: 80px 0;
+        background-color: #ffffff;
+    }
+
+    .cta-inner-container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 60px 40px;
+        background: linear-gradient(135deg, #103016 0%, #1c4d28 100%);
+        border-radius: 24px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(28, 77, 40, 0.2);
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cta-content h2 {
+        font-size: 36px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+    }
+
+    .cta-content p {
+        font-size: 16px;
+        color: #c4d7c9;
+        margin-bottom: 32px;
+        line-height: 1.6;
+    }
+
+    .cta-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-cta-primary {
+        background: #4caf6e;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(76, 175, 110, 0.3);
+        transition: all 0.2s;
+    }
+
+    .btn-cta-primary:hover {
+        background: #41965e;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(76, 175, 110, 0.4);
+    }
+
+    .btn-cta-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 13px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+
+    .btn-cta-secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Footer */
+    .welcome-footer-info {
+        padding: 32px 0;
+        background-color: #0f1c11;
+        color: #6a7c6f;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        font-size: 12.5px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 960px) {
+        .hero-container {
             flex-direction: column;
-            padding: 40px 24px;
             text-align: center;
+            padding: 40px 24px;
         }
 
-        .hero-content h1 {
+        .hero-info {
+            max-width: 100%;
+        }
+
+        .hero-info h1 {
+            font-size: 36px;
+        }
+
+        .hero-actions {
+            justify-content: center;
+        }
+
+        .hero-stats {
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .hero-visual {
+            width: 100%;
+            max-width: 360px;
+            margin-top: 20px;
+        }
+
+        .nav-links {
+            display: none;
+            /* Hide navigation links on small screens */
+        }
+    }
+
+    @media (max-width: 600px) {
+        .nav-container {
+            padding: 0 16px;
+        }
+
+        .brand-text {
+            font-size: 16px;
+        }
+
+        .nav-actions {
+            gap: 6px;
+        }
+
+        .nav-btn-secondary {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .nav-btn-primary {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .welcome-hero-section {
+            padding: 40px 0;
+        }
+
+        .hero-info h1 {
+            font-size: 30px;
+        }
+
+        .hero-stats {
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .welcome-section {
+            padding: 50px 0;
+        }
+
+        .section-header h2 {
+            font-size: 26px;
+        }
+
+        .cta-inner-container {
+            padding: 40px 20px;
+            border-radius: 0;
+        }
+
+        .cta-content h2 {
             font-size: 28px;
-        }
-
-        .welcome-cta {
-            padding: 30px 24px;
         }
     }
 </style>

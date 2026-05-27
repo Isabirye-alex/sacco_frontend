@@ -87,12 +87,19 @@ async function setActiveScreen(screen) {
 
     // Hide sidebar on welcome screen
     const sidebar = document.getElementById('sidebar');
+    const screenRoot = document.getElementById('screen-root');
     if (screen === 'welcome') {
         sidebar.style.display = 'none';
         document.querySelector('.topbar').style.display = 'none';
+        if (screenRoot) {
+            screenRoot.classList.add('welcome-mode');
+        }
     } else {
         sidebar.style.display = 'block';
         document.querySelector('.topbar').style.display = 'flex';
+        if (screenRoot) {
+            screenRoot.classList.remove('welcome-mode');
+        }
     }
 
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -120,18 +127,15 @@ async function setActiveScreen(screen) {
 
     // Setup welcome screen authentication handlers
     if (screen === 'welcome') {
-        const loginBtn = document.getElementById('login-btn');
-        const registerBtn = document.getElementById('register-btn');
+        document.querySelectorAll('.login-btn-trigger').forEach(btn => {
+            btn.removeEventListener('click', showLoginForm);
+            btn.addEventListener('click', showLoginForm);
+        });
 
-        if (loginBtn) {
-            loginBtn.removeEventListener('click', showLoginForm);
-            loginBtn.addEventListener('click', showLoginForm);
-        }
-
-        if (registerBtn) {
-            registerBtn.removeEventListener('click', showRegisterForm);
-            registerBtn.addEventListener('click', showRegisterForm);
-        }
+        document.querySelectorAll('.register-btn-trigger').forEach(btn => {
+            btn.removeEventListener('click', showRegisterForm);
+            btn.addEventListener('click', showRegisterForm);
+        });
     }
 
     await loadScreenData(screen).catch(error => showError(`Unable to load ${screen}: ${error.message}`));
