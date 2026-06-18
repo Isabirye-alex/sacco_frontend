@@ -1,0 +1,177 @@
+/* ==========================================================================
+   MAZAOSACCO GLOBAL STYLESHEET (custom.css)
+   ========================================================================== */
+
+/* --- Core Page Baseline --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F4F7FA;
+    color: #1A202C;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Web Component Framework Constraints --- */
+app-sidebar:not(:defined), 
+app-navbar:not(:defined),
+app-footer:not(:defined) {
+    display: block;
+    background-color: #ffffff;
+}
+
+/* --- Fixed Sidebar Framework --- */
+app-sidebar {
+    display: block;
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #ffffff !important;
+    border-right: 1px solid #E2E8F0 !important;
+}
+
+app-sidebar a {
+    text-decoration: none !important;
+}
+
+/* --- Sidebar Link Overrides (Strips out Bootstrap Link Blues) --- */
+app-sidebar .nav-link {
+    color: #4A5568 !important; /* Elegant slate gray */
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+app-sidebar .nav-link:hover {
+    background-color: #EDF2F7 !important;
+    color: #1A202C !important;
+}
+
+/* Sidebar Active State Custom Variable */
+app-sidebar .nav-link.bg-primary {
+    background-color: #0A3B75 !important; /* Premium brand navy blue */
+    color: #ffffff !important;
+}
+
+/* --- Fixed Top Navbar Framework --- */
+app-navbar {
+    display: block;
+    height: 70px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 260px;
+    z-index: 90;
+    background-color: #ffffff;
+}
+
+/* --- Pinned Bottom Footer Framework --- */
+app-footer {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 260px;
+    z-index: 80;
+    background-color: #ffffff;
+}
+
+/* --- Main content viewport alignment matrix --- */
+.main-content {
+    margin-left: 260px;
+    padding-top: 70px;    /* Matches height of the top navbar */
+    padding-bottom: 65px; /* Spacer safety barrier prevents footer text overlap */
+    min-height: 100vh;
+}
+
+/* --- Unified Content Custom Blocks --- */
+.custom-card {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.balance-banner {
+    background: linear-gradient(135deg, #0A3B75 0%, #1A569B 100%);
+    border-radius: 12px;
+    color: white;
+    padding: 2rem;
+}
+
+.btn-deposit {
+    background-color: #0E8345;
+    color: white;
+    font-weight: 500;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.btn-deposit:hover {
+    background-color: #0B6B37;
+    color: white;
+}
+
+.action-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #fff;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.action-icon-wrapper {
+    width: 45px;
+    height: 45px;
+    background-color: #F0F4F8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    color: #1A569B;
+}
+
+.badge-green {
+    background-color: #DEF7EC;
+    color: #03543F;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.badge-trend {
+    background-color: rgba(255,255,255,0.2);
+    color: #EFFFFA;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #E2E8F0;
+}
+
+/* --- Responsive Layout Mechanics --- */
+@media (max-width: 991.98px) {
+    app-navbar,
+    app-footer {
+        left: 0;
+    }
+    .main-content {
+        margin-left: 0;
+    }
+}
