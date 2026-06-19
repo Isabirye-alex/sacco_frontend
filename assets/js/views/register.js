@@ -30,11 +30,11 @@ const registerView = {
                     <input type="password" class="form-control" id="password" required>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Branch ID</label>
+                    <label class="form-label">Branch</label>
                     <input class="form-control" id="branch_id" required>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Gender ID</label>
+                    <label class="form-label">Gender</label>
                     <input class="form-control" id="gender_id" required>
                   </div>
                 </div>
