@@ -1,11 +1,11 @@
 const loginView = {
   render() {
     return `
-      <section class="row justify-content-center">
+      <section class="d-flex align-items-center justify-content-center min-vh-100">
         <div class="col-md-6">
           <div class="card shadow-sm">
             <div class="card-body p-4">
-              <h3 class="mb-3">Sign in</h3>
+              <h3 class="mb-3 text-center">Sign in</h3>
               <form id="loginForm">
                 <div class="mb-3">
                   <label class="form-label">Email</label>
