@@ -14,9 +14,12 @@ const appRouter = {
     const view = this.routes[hash] || welcomeView;
     const app = document.getElementById('app');
 
+    console.info('[Router] navigating to:', hash);
+
     if (view.beforeEnter) {
       const canEnter = await view.beforeEnter();
       if (!canEnter) {
+        console.info('[Router] redirecting to login');
         window.location.hash = '#login';
         return;
       }
@@ -24,6 +27,7 @@ const appRouter = {
 
     app.innerHTML = view.render ? await view.render() : '';
     app.insertAdjacentHTML('beforeend', renderFooter());
+    console.info('[Router] view rendered:', hash);
 
     if (view.bindEvents) {
       view.bindEvents();

@@ -1,22 +1,10 @@
 const welcomeView = {
   async render() {
-    const fallbackSavings = [
-      { name: 'Daily Savings', code: 'DS-01', interest_rate_pa: 6 },
-      { name: 'School Fees Plan', code: 'SF-02', interest_rate_pa: 5 },
-      { name: 'Emergency Fund', code: 'EF-03', interest_rate_pa: 7 }
-    ];
-
-    const fallbackLoans = [
-      { name: 'Education Loan', code: 'ED-01', interest_rate_pa: 12 },
-      { name: 'Business Boost', code: 'BB-02', interest_rate_pa: 14 },
-      { name: 'Home Improvement', code: 'HI-03', interest_rate_pa: 10 }
-    ];
-
     try {
       const products = await listSavingsProducts();
       const loanProducts = await listLoanProducts();
-      const savingsData = Array.isArray(products) && products.length ? products : fallbackSavings;
-      const loanData = Array.isArray(loanProducts) && loanProducts.length ? loanProducts : fallbackLoans;
+      const savingsData = Array.isArray(products) ? products : [];
+      const loanData = Array.isArray(loanProducts) ? loanProducts : [];
 
       const savingsCards = savingsData.slice(0, 3).map(p => `
         <div class="col-md-4">
@@ -69,16 +57,17 @@ const welcomeView = {
 
           <div class="mb-4">
             <h3>Popular savings schemes</h3>
-            <div class="row g-3">${savingsCards}</div>
+            <div class="row g-3">${savingsCards || '<div class="col-12"><p class="text-muted mb-0">No savings products available.</p></div>'}</div>
           </div>
 
           <div>
             <h3>Available loan schemes</h3>
-            <div class="row g-3">${loanCards}</div>
+            <div class="row g-3">${loanCards || '<div class="col-12"><p class="text-muted mb-0">No loan products available.</p></div>'}</div>
           </div>
         </section>
       `;
     } catch (error) {
+      console.error('Welcome view error:', error);
       return `
         <section>
           <div class="row align-items-center mb-5">
@@ -89,34 +78,23 @@ const welcomeView = {
           </div>
           <div class="mb-4">
             <h3>Popular savings schemes</h3>
-            <div class="row g-3">${fallbackSavings.slice(0, 3).map(p => `
-              <div class="col-md-4">
-                <div class="card h-100 shadow-sm">
-                  <div class="card-body">
-                    <h5>${p.name}</h5>
-                    <p class="text-muted mb-1">Code: ${p.code}</p>
-                    <p class="mb-0">Interest: ${p.interest_rate_pa}%</p>
-                  </div>
-                </div>
+            <div class="row g-3">
+              <div class="col-12">
+                <p class="text-muted mb-0">No savings products available.</p>
               </div>
-            `).join('')}</div>
+            </div>
           </div>
           <div>
             <h3>Available loan schemes</h3>
-            <div class="row g-3">${fallbackLoans.slice(0, 3).map(p => `
-              <div class="col-md-4">
-                <div class="card h-100 shadow-sm">
-                  <div class="card-body">
-                    <h5>${p.name}</h5>
-                    <p class="text-muted mb-1">Code: ${p.code}</p>
-                    <p class="mb-0">Rate: ${p.interest_rate_pa}%</p>
-                  </div>
-                </div>
+            <div class="row g-3">
+              <div class="col-12">
+                <p class="text-muted mb-0">No loan products available.</p>
               </div>
-            `).join('')}</div>
+            </div>
           </div>
         </section>
       `;
     }
   }
 };
+
