@@ -41,16 +41,17 @@ const welcomeView = {
                 <a href="#register" class="btn btn-outline-success">Register as new member</a>
               </div>
             </div>
-            <div class="col-lg-5">
-              <div class="card shadow-sm">
-                <div class="card-body">
-                  <h5>Why members choose us</h5>
-                  <ul class="mb-0">
-                    <li>Fast account access</li>
-                    <li>Transparent loan products</li>
-                    <li>Secure savings plans</li>
-                  </ul>
-                </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5>Why members choose us</h5>
+                <ul class="mb-0">
+                  <li>Fast account access</li>
+                  <li>Transparent loan products</li>
+                  <li>Secure savings plans</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -77,6 +78,18 @@ const welcomeView = {
             </div>
           </div>
           <div class="mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5>Why members choose us</h5>
+                <ul class="mb-0">
+                  <li>Fast account access</li>
+                  <li>Transparent loan products</li>
+                  <li>Secure savings plans</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="mb-4">
             <h3>Popular savings schemes</h3>
             <div class="row g-3">
               <div class="col-12">
@@ -94,6 +107,23 @@ const welcomeView = {
           </div>
         </section>
       `;
+    }
+  },
+
+  bindEvents() {
+    // Add fixed background video once
+    if (!document.querySelector('.page-video')) {
+      const video = document.createElement('video');
+      video.className = 'page-video';
+      video.autoplay = true;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      const source = document.createElement('source');
+      source.src = 'https://cdn.coverr.co/videos/coverr-working-on-a-laptop-5176/1080p.mp4';
+      source.type = 'video/mp4';
+      video.appendChild(source);
+      document.body.insertBefore(video, document.body.firstChild);
     }
   }
 };
