@@ -18,6 +18,7 @@ body::before {
 
 #app {
   max-width: 1220px;
+  padding-top: 0.5rem;
 }
 
 .card {
@@ -220,11 +221,12 @@ footer {
 .welcome-hero {
   position: relative;
   overflow: hidden;
+  margin-top: 0;
   background: linear-gradient(135deg, #eff6ff 0%, #eefbf8 100%);
 }
 
 .hero-panel {
-  min-height: 220px;
+  min-height: 180px;
   border-radius: 18px;
   background:
     linear-gradient(120deg, rgba(13, 110, 253, 0.9), rgba(20, 184, 166, 0.82)),

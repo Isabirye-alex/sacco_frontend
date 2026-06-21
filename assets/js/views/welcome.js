@@ -32,9 +32,9 @@ const welcomeView = {
 
       return `
         <section>
-          <div class="welcome-hero card shadow-sm mb-5">
-            <div class="card-body p-5">
-              <div class="row align-items-center g-4">
+          <div class="welcome-hero card shadow-sm mb-4 mt-0">
+            <div class="card-body p-4">
+              <div class="row align-items-center g-3">
                 <div class="col-lg-7">
                   <p class="eyebrow-text mb-2">Member-first banking</p>
                   <h1 class="display-6 fw-bold mb-3">Grow your savings with confidence</h1>
@@ -98,9 +98,9 @@ const welcomeView = {
       console.error('Welcome view error:', error);
       return `
         <section>
-          <div class="welcome-hero card shadow-sm mb-5">
-            <div class="card-body p-5">
-              <div class="row align-items-center g-4">
+          <div class="welcome-hero card shadow-sm mb-4 mt-0">
+            <div class="card-body p-4">
+              <div class="row align-items-center g-3">
                 <div class="col-lg-7">
                   <p class="eyebrow-text mb-2">Member-first banking</p>
                   <h1 class="display-6 fw-bold mb-3">Grow your savings with confidence</h1>
