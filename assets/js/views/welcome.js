@@ -8,7 +8,7 @@ const welcomeView = {
 
       const savingsCards = savingsData.slice(0, 3).map(p => `
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm">
+          <div class="card h-100 shadow-sm welcome-feature-card">
             <div class="card-body">
               <h5>${p.name || 'Savings Product'}</h5>
               <p class="text-muted mb-1">Code: ${p.code || 'N/A'}</p>
@@ -20,7 +20,7 @@ const welcomeView = {
 
       const loanCards = loanData.slice(0, 3).map(p => `
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm">
+          <div class="card h-100 shadow-sm welcome-feature-card">
             <div class="card-body">
               <h5>${p.name || 'Loan Product'}</h5>
               <p class="text-muted mb-1">Code: ${p.code || 'N/A'}</p>
@@ -32,26 +32,53 @@ const welcomeView = {
 
       return `
         <section>
-          <div class="row align-items-center mb-5">
-            <div class="col-lg-7">
-              <h1 class="display-6 fw-bold">Welcome to SACCO</h1>
-              <p class="lead text-muted">Manage savings, shares, and loans from one secure dashboard.</p>
-              <div class="d-flex gap-2">
-                <a href="#login" class="btn btn-primary">Log in</a>
-                <a href="#register" class="btn btn-outline-success">Register as new member</a>
+          <div class="welcome-hero card shadow-sm mb-5">
+            <div class="card-body p-5">
+              <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                  <p class="eyebrow-text mb-2">Member-first banking</p>
+                  <h1 class="display-6 fw-bold mb-3">Grow your savings with confidence</h1>
+                  <p class="lead text-muted mb-4">Track your savings, shares, and loan activity in one secure member portal.</p>
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="#login" class="btn btn-primary">Log in</a>
+                    <a href="#register" class="btn btn-outline-success">Register now</a>
+                  </div>
+                </div>
+                <div class="col-lg-5">
+                  <div class="hero-panel">
+                    <div>
+                      <p class="text-muted mb-1">Today</p>
+                      <h3 class="mb-0">Secure, simple, transparent</h3>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5>Why members choose us</h5>
-                <ul class="mb-0">
-                  <li>Fast account access</li>
-                  <li>Transparent loan products</li>
-                  <li>Secure savings plans</li>
-                </ul>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <h6 class="mb-1">Fast access</h6>
+                  <p class="text-muted mb-0">Reach your dashboard and account details in seconds.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <h6 class="mb-1">Secure records</h6>
+                  <p class="text-muted mb-0">Keep your savings and loan information protected.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <h6 class="mb-1">Helpful support</h6>
+                  <p class="text-muted mb-0">Stay updated with clear milestones and easier next steps.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -71,39 +98,29 @@ const welcomeView = {
       console.error('Welcome view error:', error);
       return `
         <section>
-          <div class="row align-items-center mb-5">
-            <div class="col-lg-7">
-              <h1 class="display-6 fw-bold">Welcome to SACCO</h1>
-              <p class="lead text-muted">Manage savings, shares, and loans from one secure dashboard.</p>
-            </div>
-          </div>
-          <div class="mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5>Why members choose us</h5>
-                <ul class="mb-0">
-                  <li>Fast account access</li>
-                  <li>Transparent loan products</li>
-                  <li>Secure savings plans</li>
-                </ul>
+          <div class="welcome-hero card shadow-sm mb-5">
+            <div class="card-body p-5">
+              <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                  <p class="eyebrow-text mb-2">Member-first banking</p>
+                  <h1 class="display-6 fw-bold mb-3">Grow your savings with confidence</h1>
+                  <p class="lead text-muted mb-4">Track your savings, shares, and loan activity in one secure member portal.</p>
+                </div>
               </div>
             </div>
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body"><h6 class="mb-1">Fast access</h6><p class="text-muted mb-0">Reach your dashboard and account details in seconds.</p></div></div></div>
+            <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body"><h6 class="mb-1">Secure records</h6><p class="text-muted mb-0">Keep your savings and loan information protected.</p></div></div></div>
+            <div class="col-md-4"><div class="card shadow-sm h-100"><div class="card-body"><h6 class="mb-1">Helpful support</h6><p class="text-muted mb-0">Stay updated with clear milestones and easier next steps.</p></div></div></div>
           </div>
           <div class="mb-4">
             <h3>Popular savings schemes</h3>
-            <div class="row g-3">
-              <div class="col-12">
-                <p class="text-muted mb-0">No savings products available.</p>
-              </div>
-            </div>
+            <div class="row g-3"><div class="col-12"><p class="text-muted mb-0">No savings products available.</p></div></div>
           </div>
           <div>
             <h3>Available loan schemes</h3>
-            <div class="row g-3">
-              <div class="col-12">
-                <p class="text-muted mb-0">No loan products available.</p>
-              </div>
-            </div>
+            <div class="row g-3"><div class="col-12"><p class="text-muted mb-0">No loan products available.</p></div></div>
           </div>
         </section>
       `;
@@ -111,7 +128,6 @@ const welcomeView = {
   },
 
   bindEvents() {
-    // Add fixed background video once
     if (!document.querySelector('.page-video')) {
       const video = document.createElement('video');
       video.className = 'page-video';

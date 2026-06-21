@@ -4,7 +4,7 @@ const appRouter = {
     '#login': loginView,
     '#dashboard': dashboardView,
     '#register': registerView,
-    '#members': membersView,
+    '#profile': membersView,
     '#savings': savingsView,
     '#shares': sharesView,
     '#loans': loansView
@@ -45,10 +45,32 @@ function updateNavState() {
   const nav = document.querySelector('#navMenu .navbar-nav');
   if (!nav) return;
 
-  let logoutItem = document.getElementById('logoutBtn');
+  const isLoggedIn = !!getStoredToken();
+  const navItems = nav.querySelectorAll('[data-nav-item]');
+
+  navItems.forEach(item => {
+    const target = item.dataset.navTarget || '';
+    if (target === 'guest-only' || target === 'member-only') {
+      item.style.display = isLoggedIn ? (target === 'member-only' ? '' : 'none') : (target === 'guest-only' ? '' : 'none');
+    }
+  });
+
+  const logoutItem = document.getElementById('logoutBtn');
   if (logoutItem) logoutItem.parentElement.remove();
 
-  if (getStoredToken()) {
+  const userBadge = document.getElementById('userBadge');
+  if (userBadge) userBadge.remove();
+
+  if (isLoggedIn) {
+    const user = getStoredUser() || {};
+    const userName = user.first_name || user.name || user.email || 'Member';
+
+    const badge = document.createElement('li');
+    badge.className = 'nav-item d-none d-lg-block';
+    badge.id = 'userBadge';
+    badge.innerHTML = `<span class="nav-link text-light opacity-75 mb-0">Hi, ${userName}</span>`;
+    nav.prepend(badge);
+
     const item = document.createElement('li');
     item.className = 'nav-item';
     item.innerHTML = '<a class="nav-link" href="#" id="logoutBtn">Logout</a>';
@@ -62,7 +84,7 @@ function updateNavState() {
 
 function logout() {
   clearToken();
-  localStorage.removeItem('user');
+  clearUserData();
   window.location.hash = '#welcome';
 }
 

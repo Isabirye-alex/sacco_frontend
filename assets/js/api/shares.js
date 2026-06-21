@@ -8,7 +8,8 @@ async function listShareProducts() {
 async function listShareAccounts() {
   return request({
     url: apiUrl('/shares/accounts'),
-    method: 'GET'
+    method: 'GET',
+    auth: true
   });
 }
 

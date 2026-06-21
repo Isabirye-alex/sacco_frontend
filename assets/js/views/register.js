@@ -1,12 +1,12 @@
 const registerView = {
   render() {
     return `
-      <section class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="card shadow-sm">
-            <div class="card-body p-4">
-              <h3 class="mb-1">Register Member</h3>
-              <p class="text-muted">Create your account to access savings, shares, and loans.</p>
+      <section class="row justify-content-center py-4">
+        <div class="col-lg-9">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-lg-5">
+              <h3 class="mb-1">Create your member account</h3>
+              <p class="text-muted">Join the SACCO and start managing your savings, shares, and loan needs.</p>
               <form id="registerForm">
                 <div class="row g-3">
                   <div class="col-md-6">
@@ -23,17 +23,19 @@ const registerView = {
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Phone</label>
-                    <input class="form-control" id="phone">
+                    <input class="form-control" id="phone" placeholder="07XXXXXXXX">
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" required>
+                    <div class="input-group">
+                      <input type="password" class="form-control" id="password" required>
+                      <button class="btn btn-outline-secondary" type="button" id="toggleRegisterPassword">Show</button>
+                    </div>
                   </div>
                   <div class="col-md-6">
-  <label class="form-label">National ID</label>
-  <input class="form-control" id="national_id" required>
-</div>
-
+                    <label class="form-label">National ID</label>
+                    <input class="form-control" id="national_id" required>
+                  </div>
                   <div class="col-md-6">
                     <label class="form-label">Branch</label>
                     <select class="form-select" id="branch_id" required>
@@ -54,6 +56,11 @@ const registerView = {
                   </div>
                 </div>
 
+                <div class="form-check mt-3">
+                  <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                  <label class="form-check-label small" for="agreeTerms">I agree to the terms and privacy policy</label>
+                </div>
+
                 <div class="d-flex gap-2 mt-4">
                   <button class="btn btn-success">Create Member</button>
                   <a href="#login" class="btn btn-outline-secondary">Back to login</a>
@@ -67,10 +74,17 @@ const registerView = {
   },
 
   async bindEvents() {
-    // 1. Fetch data and populate lookups immediately when view binds
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('toggleRegisterPassword');
+
+    togglePassword?.addEventListener('click', () => {
+      const isHidden = passwordInput.type === 'password';
+      passwordInput.type = isHidden ? 'text' : 'password';
+      togglePassword.textContent = isHidden ? 'Hide' : 'Show';
+    });
+
     await this.loadDropdownOptions();
 
-    // 2. Handle form submission
     document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const button = e.target.querySelector('button');
@@ -87,7 +101,6 @@ const registerView = {
         const firstNameValue = document.getElementById('first_name').value;
         const lastNameValue = document.getElementById('last_name').value;
 
-        // Structured payload to match the exact JSON schema provided
         const payload = {
           member: {
             first_name: firstNameValue,
@@ -100,7 +113,6 @@ const registerView = {
             user_id: null,
             member_no: null,
             date_of_birth: null,
-            national_id: null,
             marital_status_id: getValueOrNull('marital_status_id'),
             photo_url: null,
             national_id: document.getElementById('national_id').value,
@@ -126,7 +138,6 @@ const registerView = {
         };
 
         const member = await createMemberWithUser(payload);
-
         showToast('Member created successfully', 'success');
         if (member && member.id) {
           setTimeout(() => {
@@ -141,7 +152,6 @@ const registerView = {
     });
   },
 
-  // Helper method to fetch API data and build options
   async loadDropdownOptions() {
     try {
       const [branches, genders, maritalStatuses] = await Promise.all([
@@ -170,7 +180,6 @@ const registerView = {
     return await response.json();
   },
 
-  // Dynamic DOM injector for options
   populateSelect(elementId, items, placeholderText) {
     const selectEl = document.getElementById(elementId);
     if (!selectEl) return;

@@ -8,7 +8,8 @@ async function listSavingsProducts() {
 async function listSavingsAccounts() {
   return request({
     url: apiUrl('/savings/accounts'),
-    method: 'GET'
+    method: 'GET',
+    auth: true
   });
 }
 
