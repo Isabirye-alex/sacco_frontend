@@ -5,8 +5,8 @@ const registerView = {
         <div class="col-lg-9">
           <div class="card shadow-sm border-0">
             <div class="card-body p-4 p-lg-5">
-              <h3 class="mb-1">Create your member account</h3>
-              <p class="text-muted">Join the SACCO and start managing your savings, shares, and loan needs.</p>
+              <h3 class="mb-1">Member Registration</h3>
+                  <p class="text-muted">Complete the form below to create a new member account.</p>
               <form id="registerForm">
                 <div class="row g-3">
                   <div class="col-md-6">
@@ -38,15 +38,15 @@ const registerView = {
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Branch</label>
-                    <select class="form-select" id="branch_id" required>
-                      <option value="" disabled selected>Loading branches...</option>
-                    </select>
+                      <select class="form-select" id="branch_id" required>
+                        <option value="" disabled selected>Loading branches...</option>
+                      </select>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Gender</label>
-                    <select class="form-select" id="gender_id" required>
-                      <option value="" disabled selected>Loading genders...</option>
-                    </select>
+                      <select class="form-select" id="gender_id" required>
+                        <option value="" disabled selected>Loading genders...</option>
+                      </select>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Marital Status</label>
